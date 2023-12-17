@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine.Promise;
-using UnityEngine.GameFoundation;
 
 namespace UnityEngine.GameFoundation.Configs
 {
