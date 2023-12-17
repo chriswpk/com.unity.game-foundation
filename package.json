@@ -17,8 +17,7 @@
   ],
   "dependencies": {
     "com.unity.addressables": "1.16.16",
-    "com.unity.analytics": "3.3.2",
-    "com.unity.textmeshpro": "2.1.0"
+    "com.unity.analytics": "3.3.2"
   },
   "relatedPackages": {
     "com.unity.game-foundation.tests": "0.9.0-preview.3"
