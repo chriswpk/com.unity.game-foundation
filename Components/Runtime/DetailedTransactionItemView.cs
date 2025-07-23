@@ -179,7 +179,7 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         protected override void UpdateContentAtRuntime()
         {
-            if (!GameFoundationSdk.IsInitialized)
+            if (!GameFoundationSystem.IsInitialized)
             {
                 SetTextContent(string.Empty, string.Empty);
                 SetIconSprite(null);

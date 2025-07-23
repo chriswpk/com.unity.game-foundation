@@ -9,7 +9,7 @@ namespace UnityEngine.GameFoundation
     /// <summary>
     ///     Manage the initialization and the persistence of Game Foundation's systems.
     /// </summary>
-    public static class GameFoundationSdk
+    public static class GameFoundationSystem
     {
         enum InitializationStatus
         {
@@ -41,9 +41,9 @@ namespace UnityEngine.GameFoundation
         public static event Action uninitialized;
 
         /// <summary>
-        ///     Initializes some static values of the <see cref="GameFoundationSdk"/>.
+        ///     Initializes some static values of the <see cref="GameFoundationSystem"/>.
         /// </summary>
-        static GameFoundationSdk()
+        static GameFoundationSystem()
         {
             currentVersion = Assembly.GetExecutingAssembly().GetName().Version.ToString();
         }
@@ -111,7 +111,7 @@ namespace UnityEngine.GameFoundation
         /// <summary>
         ///     Instance of the GameFoundationDebug class to use for logging.
         /// </summary>
-        static GameFoundationDebug k_GFLogger = GameFoundationDebug.Get(typeof(GameFoundationSdk));
+        static GameFoundationDebug k_GFLogger = GameFoundationDebug.Get(typeof(GameFoundationSystem));
 
         /// <summary>
         ///     Initialize GameFoundation systems.
@@ -137,7 +137,7 @@ namespace UnityEngine.GameFoundation
             if (s_InitializationStatus == InitializationStatus.Initializing ||
                 s_InitializationStatus == InitializationStatus.Initialized)
             {
-                const string message = nameof(GameFoundationSdk) + " is already initialized and cannot be initialized again.";
+                const string message = nameof(GameFoundationSystem) + " is already initialized and cannot be initialized again.";
                 k_GFLogger.LogWarning(message);
                 completer.Reject(new GameFoundationException(message));
 
@@ -150,7 +150,7 @@ namespace UnityEngine.GameFoundation
             // In this case, initializing Game Foundation is disallowed.
             if (!Application.isPlaying)
             {
-                const string message = nameof(GameFoundationSdk) + " was attempted to be initialized while in Edit Mode, which is unsupported.";
+                const string message = nameof(GameFoundationSystem) + " was attempted to be initialized while in Edit Mode, which is unsupported.";
                 k_GFLogger.LogError(message);
                 completer.Reject(new GameFoundationException(message));
                 return deferred;
@@ -162,7 +162,7 @@ namespace UnityEngine.GameFoundation
             updater = new GameObject(nameof(GameFoundationUpdater))
                 .AddComponent<GameFoundationUpdater>();
 
-            GameFoundationSdk.dataLayer = dataLayer;
+            GameFoundationSystem.dataLayer = dataLayer;
 
             var routine = InitializeRoutine(completer, initOptions);
 
@@ -248,7 +248,7 @@ namespace UnityEngine.GameFoundation
             }
             catch (Exception e)
             {
-                const string message = nameof(GameFoundationSdk) + " failed to initialize runtime catalog.";
+                const string message = nameof(GameFoundationSystem) + " failed to initialize runtime catalog.";
                 var customException = new GameFoundationException(message, e);
 
                 FailInitialization(customException);
@@ -344,7 +344,7 @@ namespace UnityEngine.GameFoundation
         }
 
         /// <summary>
-        ///     Frees the resources of the <see cref="GameFoundationSdk"/>.
+        ///     Frees the resources of the <see cref="GameFoundationSystem"/>.
         /// </summary>
         public static void Uninitialize()
         {

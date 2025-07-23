@@ -398,11 +398,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnEnable()
         {
-            GameFoundationSdk.initialized += RegisterEvents;
-            GameFoundationSdk.initialized += InitializeComponentData;
-            GameFoundationSdk.willUninitialize += UnregisterEvents;
+            GameFoundationSystem.initialized += RegisterEvents;
+            GameFoundationSystem.initialized += InitializeComponentData;
+            GameFoundationSystem.willUninitialize += UnregisterEvents;
 
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 RegisterEvents();
             }
@@ -415,11 +415,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnDisable()
         {
-            GameFoundationSdk.initialized -= RegisterEvents;
-            GameFoundationSdk.initialized -= InitializeComponentData;
-            GameFoundationSdk.willUninitialize -= UnregisterEvents;
+            GameFoundationSystem.initialized -= RegisterEvents;
+            GameFoundationSystem.initialized -= InitializeComponentData;
+            GameFoundationSystem.willUninitialize -= UnregisterEvents;
 
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 UnregisterEvents();
             }
@@ -430,11 +430,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void RegisterEvents()
         {
-            if (GameFoundationSdk.transactions == null)
+            if (GameFoundationSystem.transactions == null)
                 return;
 
-            GameFoundationSdk.transactions.transactionSucceeded += OnTransactionSucceeded;
-            GameFoundationSdk.transactions.transactionFailed += OnTransactionFailed;
+            GameFoundationSystem.transactions.transactionSucceeded += OnTransactionSucceeded;
+            GameFoundationSystem.transactions.transactionFailed += OnTransactionFailed;
         }
 
         /// <summary>
@@ -442,11 +442,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void UnregisterEvents()
         {
-            if (GameFoundationSdk.transactions == null)
+            if (GameFoundationSystem.transactions == null)
                 return;
 
-            GameFoundationSdk.transactions.transactionSucceeded -= OnTransactionSucceeded;
-            GameFoundationSdk.transactions.transactionFailed -= OnTransactionFailed;
+            GameFoundationSystem.transactions.transactionSucceeded -= OnTransactionSucceeded;
+            GameFoundationSystem.transactions.transactionFailed -= OnTransactionFailed;
         }
 
         /// <summary>
@@ -490,13 +490,13 @@ namespace UnityEngine.GameFoundation.Components
             m_ScrollRect = gameObject.GetComponentInChildren<ScrollRect>(false);
 
             // This is to catch the case where Game Foundation initialized before OnEnable added the GameFoundationSdk initialize listener.
-            if (GameFoundationSdk.IsInitialized && m_Store is null)
+            if (GameFoundationSystem.IsInitialized && m_Store is null)
             {
                 InitializeComponentData();
                 return;
             }
 
-            if (Application.isPlaying && !GameFoundationSdk.IsInitialized)
+            if (Application.isPlaying && !GameFoundationSystem.IsInitialized)
             {
                 k_GFLogger.Log("Waiting for initialization.");
             }
@@ -547,7 +547,7 @@ namespace UnityEngine.GameFoundation.Components
             if (!Application.isPlaying || string.IsNullOrEmpty(definitionKey))
                 return null;
 
-            var storeDefinition = GameFoundationSdk.catalog?.Find<Store>(definitionKey);
+            var storeDefinition = GameFoundationSystem.catalog?.Find<Store>(definitionKey);
             if (!(storeDefinition is null) || !m_ShowDebugLogs) return storeDefinition;
 
             k_GFLogger.LogWarning($"Store \"{definitionKey}\" doesn't exist in Store catalog.");
@@ -568,7 +568,7 @@ namespace UnityEngine.GameFoundation.Components
             if (!Application.isPlaying)
                 return null;
 
-            return !string.IsNullOrEmpty(tagKey) ? GameFoundationSdk.tags.Find(tagKey) : null;
+            return !string.IsNullOrEmpty(tagKey) ? GameFoundationSystem.tags.Find(tagKey) : null;
         }
 
         /// <summary>
@@ -993,7 +993,7 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void UpdateRuntimeObjects()
         {
-            if (!Application.isPlaying || !GameFoundationSdk.IsInitialized)
+            if (!Application.isPlaying || !GameFoundationSystem.IsInitialized)
                 return;
 
             var valueChanged = false;

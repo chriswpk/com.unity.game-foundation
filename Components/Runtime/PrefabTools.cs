@@ -23,14 +23,14 @@ namespace UnityEngine.GameFoundation.Components
         /// </returns>
         public static bool FailIfNotInitialized(GameFoundationDebug logger, string methodName)
         {
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 return false;
             }
 
-            logger.LogError($"You must call {nameof(GameFoundationSdk)}.{nameof(GameFoundationSdk.Initialize)} "
+            logger.LogError($"You must call {nameof(GameFoundationSystem)}.{nameof(GameFoundationSystem.Initialize)} "
                             + "and wait for "
-                            + $"{nameof(GameFoundationSdk)}.{nameof(GameFoundationSdk.IsInitialized)} "
+                            + $"{nameof(GameFoundationSystem)}.{nameof(GameFoundationSystem.IsInitialized)} "
                             + $"to be true before {methodName} can be called.");
 
             return true;

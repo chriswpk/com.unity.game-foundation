@@ -164,7 +164,7 @@ namespace UnityEngine.GameFoundation
             AddInternal(slot, inventoryItem);
 
             // sync to data layer
-            (GameFoundationSdk.inventory as InventoryManagerImpl).SyncItemMapAddItem(id, slot, inventoryItem.id);
+            (GameFoundationSystem.inventory as InventoryManagerImpl).SyncItemMapAddItem(id, slot, inventoryItem.id);
         }
 
         [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -696,7 +696,7 @@ namespace UnityEngine.GameFoundation
             m_InventoryItems.Add(newSlot, item);
 
             // sync to data layer
-            (GameFoundationSdk.inventory as InventoryManagerImpl).SyncItemMapChangeSlot(id, oldSlot, newSlot);
+            (GameFoundationSystem.inventory as InventoryManagerImpl).SyncItemMapChangeSlot(id, oldSlot, newSlot);
 
             return true;
         }
@@ -741,7 +741,7 @@ namespace UnityEngine.GameFoundation
             m_InventoryItems[slot1] = item0;
 
             // sync to data layer
-            (GameFoundationSdk.inventory as InventoryManagerImpl).SyncItemMapSwapSlots(id, slot0, slot1);
+            (GameFoundationSystem.inventory as InventoryManagerImpl).SyncItemMapSwapSlots(id, slot0, slot1);
 
             return true;
         }
@@ -777,7 +777,7 @@ namespace UnityEngine.GameFoundation
             }
 
             // sync to data layer
-            (GameFoundationSdk.inventory as InventoryManagerImpl).SyncItemMapRemoveItem(id, slot);
+            (GameFoundationSystem.inventory as InventoryManagerImpl).SyncItemMapRemoveItem(id, slot);
 
             return true;
         }
@@ -843,7 +843,7 @@ namespace UnityEngine.GameFoundation
                     m_InventoryItems.Remove(slot);
 
                     // sync to data layer
-                    (GameFoundationSdk.inventory as InventoryManagerImpl).SyncItemMapRemoveItem(id, slot);
+                    (GameFoundationSystem.inventory as InventoryManagerImpl).SyncItemMapRemoveItem(id, slot);
 
                     return true;
                 }
@@ -887,7 +887,7 @@ namespace UnityEngine.GameFoundation
                 m_InventoryItems.Remove(slot);
 
                 // sync to data layer
-                (GameFoundationSdk.inventory as InventoryManagerImpl).SyncItemMapRemoveItem(id, slot);
+                (GameFoundationSystem.inventory as InventoryManagerImpl).SyncItemMapRemoveItem(id, slot);
             }
 
             // clear out the keys list for next time
@@ -914,7 +914,7 @@ namespace UnityEngine.GameFoundation
 
                 m_InventoryItems.Remove(kv.Key);
 
-                ((InventoryManagerImpl)GameFoundationSdk.inventory).SyncItemMapRemoveItem(id, kv.Key);
+                ((InventoryManagerImpl)GameFoundationSystem.inventory).SyncItemMapRemoveItem(id, kv.Key);
 
                 return;
             }
@@ -933,7 +933,7 @@ namespace UnityEngine.GameFoundation
             m_InventoryItems.Clear();
 
             // sync to data layer
-            (GameFoundationSdk.inventory as InventoryManagerImpl).SyncItemMapClear(id);
+            (GameFoundationSystem.inventory as InventoryManagerImpl).SyncItemMapClear(id);
         }
 
         /// <summary>
@@ -961,7 +961,7 @@ namespace UnityEngine.GameFoundation
                 throw new InvalidOperationException("Cannot CreateItem with same slot as item already in ItemMap.");
             }
 
-            var newItem = GameFoundationSdk.inventory.CreateItem(itemDefinition);
+            var newItem = GameFoundationSystem.inventory.CreateItem(itemDefinition);
 
             // add the item
             m_InventoryItems.Add(slot, newItem);
@@ -970,7 +970,7 @@ namespace UnityEngine.GameFoundation
             newItem.AddToCollectionInternal(this);
 
             // sync to data layer
-            (GameFoundationSdk.inventory as InventoryManagerImpl).SyncItemMapAddItem(id, slot, newItem.id);
+            (GameFoundationSystem.inventory as InventoryManagerImpl).SyncItemMapAddItem(id, slot, newItem.id);
 
             return newItem;
         }

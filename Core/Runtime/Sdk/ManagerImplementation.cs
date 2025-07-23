@@ -12,8 +12,8 @@ namespace UnityEngine.GameFoundation
     abstract class ManagerImplementation
     {
         /// <summary>
-        ///     Initializes this manager using GameFoundation's <see cref="GameFoundationSdk.dataLayer"/>
-        ///     and <see cref="GameFoundationSdk.catalog"/>.
+        ///     Initializes this manager using GameFoundation's <see cref="GameFoundationSystem.dataLayer"/>
+        ///     and <see cref="GameFoundationSystem.catalog"/>.
         /// </summary>
         /// <param name="initOptions">
         ///     An instance of <see cref="GameFoundationInitOptions"/>

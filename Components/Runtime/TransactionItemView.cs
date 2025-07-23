@@ -185,11 +185,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnEnable()
         {
-            GameFoundationSdk.initialized += RegisterEvents;
-            GameFoundationSdk.initialized += InitializeComponentData;
-            GameFoundationSdk.willUninitialize += UnregisterEvents;
+            GameFoundationSystem.initialized += RegisterEvents;
+            GameFoundationSystem.initialized += InitializeComponentData;
+            GameFoundationSystem.willUninitialize += UnregisterEvents;
 
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 RegisterEvents();
             }
@@ -205,11 +205,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnDisable()
         {
-            GameFoundationSdk.initialized -= RegisterEvents;
-            GameFoundationSdk.initialized -= InitializeComponentData;
-            GameFoundationSdk.willUninitialize -= UnregisterEvents;
+            GameFoundationSystem.initialized -= RegisterEvents;
+            GameFoundationSystem.initialized -= InitializeComponentData;
+            GameFoundationSystem.willUninitialize -= UnregisterEvents;
 
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 UnregisterEvents();
             }
@@ -220,11 +220,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void RegisterEvents()
         {
-            if (GameFoundationSdk.transactions == null)
+            if (GameFoundationSystem.transactions == null)
                 return;
 
-            GameFoundationSdk.transactions.transactionSucceeded += OnTransactionSucceeded;
-            GameFoundationSdk.transactions.transactionFailed += OnTransactionFailed;
+            GameFoundationSystem.transactions.transactionSucceeded += OnTransactionSucceeded;
+            GameFoundationSystem.transactions.transactionFailed += OnTransactionFailed;
 
             if (m_PurchaseButton)
             {
@@ -237,11 +237,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void UnregisterEvents()
         {
-            if (GameFoundationSdk.transactions == null)
+            if (GameFoundationSystem.transactions == null)
                 return;
 
-            GameFoundationSdk.transactions.transactionSucceeded -= OnTransactionSucceeded;
-            GameFoundationSdk.transactions.transactionFailed -= OnTransactionFailed;
+            GameFoundationSystem.transactions.transactionSucceeded -= OnTransactionSucceeded;
+            GameFoundationSystem.transactions.transactionFailed -= OnTransactionFailed;
 
             if (m_PurchaseButton)
             {
@@ -315,7 +315,7 @@ namespace UnityEngine.GameFoundation.Components
                 return;
             }
 
-            if (!GameFoundationSdk.IsInitialized)
+            if (!GameFoundationSystem.IsInitialized)
             {
                 k_GFLogger.Log("Waiting for initialization.");
                 UpdateContent();
@@ -323,7 +323,7 @@ namespace UnityEngine.GameFoundation.Components
             }
 
             // This is to catch the case where Game Foundation initialized before OnEnable added the GameFoundationSdk initialize listener.
-            if (GameFoundationSdk.IsInitialized && m_Transaction is null)
+            if (GameFoundationSystem.IsInitialized && m_Transaction is null)
             {
                 InitializeComponentData();
             }
@@ -366,7 +366,7 @@ namespace UnityEngine.GameFoundation.Components
             if (!Application.isPlaying || string.IsNullOrEmpty(definitionKey))
                 return null;
 
-            var transactionItem = GameFoundationSdk.catalog?.Find<BaseTransaction>(definitionKey);
+            var transactionItem = GameFoundationSystem.catalog?.Find<BaseTransaction>(definitionKey);
             if (transactionItem != null || !m_ShowDebugLogs) return transactionItem;
 
             k_GFLogger.LogWarning($"TransactionItem \"{definitionKey}\" doesn't exist in Transaction catalog.");
@@ -560,7 +560,7 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void UpdateRuntimeObject()
         {
-            if (!Application.isPlaying || !GameFoundationSdk.IsInitialized)
+            if (!Application.isPlaying || !GameFoundationSystem.IsInitialized)
                 return;
 
             if (m_Transaction is null && !string.IsNullOrEmpty(m_TransactionKey) ||
@@ -592,7 +592,7 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         protected virtual void UpdateContentAtRuntime()
         {
-            if (!GameFoundationSdk.IsInitialized)
+            if (!GameFoundationSystem.IsInitialized)
             {
                 SetTextContent(string.Empty, string.Empty);
                 SetIconSprite(null);

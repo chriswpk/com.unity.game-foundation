@@ -28,7 +28,7 @@ namespace UnityEngine.GameFoundation
             foreach (var defaultEntry in defaultProperties)
             {
                 var key = defaultEntry.Key;
-                var value = GameFoundationSdk.dataLayer.GetMutablePropertyValue(id, key);
+                var value = GameFoundationSystem.dataLayer.GetMutablePropertyValue(id, key);
                 properties.Add(key, value);
             }
 
@@ -56,7 +56,7 @@ namespace UnityEngine.GameFoundation
             foreach (var defaultEntry in defaultProperties)
             {
                 var key = defaultEntry.Key;
-                var value = GameFoundationSdk.dataLayer.GetMutablePropertyValue(id, key);
+                var value = GameFoundationSystem.dataLayer.GetMutablePropertyValue(id, key);
                 target.Add(key, value);
             }
         }
@@ -108,7 +108,7 @@ namespace UnityEngine.GameFoundation
             Tools.ThrowIfArgNullOrEmpty(key, nameof(key));
             AssertActive();
 
-            return GameFoundationSdk.dataLayer.GetMutablePropertyValue(m_Id, key);
+            return GameFoundationSystem.dataLayer.GetMutablePropertyValue(m_Id, key);
         }
 
         /// <summary>
@@ -131,7 +131,7 @@ namespace UnityEngine.GameFoundation
         {
             AssertActive();
 
-            return GameFoundationSdk.dataLayer.TryGetMutablePropertyValue(m_Id, key, out property);
+            return GameFoundationSystem.dataLayer.TryGetMutablePropertyValue(m_Id, key, out property);
         }
 
         /// <summary>
@@ -206,7 +206,7 @@ namespace UnityEngine.GameFoundation
             Tools.ThrowIfArgNullOrEmpty(key, nameof(key));
             AssertActive();
 
-            var storedProperty = GameFoundationSdk.dataLayer.GetMutablePropertyValue(m_Id, key);
+            var storedProperty = GameFoundationSystem.dataLayer.GetMutablePropertyValue(m_Id, key);
 
             if (!storedProperty.type.IsNumber())
                 throw new InvalidOperationException(
@@ -307,14 +307,14 @@ namespace UnityEngine.GameFoundation
         /// </param>
         void SynchronizedSetMutableProperty(string key, Property value)
         {
-            GameFoundationSdk.dataLayer.SetMutablePropertyValue(m_Id, key, value, Completer.None);
+            GameFoundationSystem.dataLayer.SetMutablePropertyValue(m_Id, key, value, Completer.None);
 
             // fire event for this inventory item that its property has changed
             var args = new PropertyChangedEventArgs(this, key, value);
             mutablePropertyChanged?.Invoke(args);
 
             // also fire inventory event that any item's property has changed
-            var inventory = GameFoundationSdk.inventory as InventoryManagerImpl;
+            var inventory = GameFoundationSystem.inventory as InventoryManagerImpl;
             inventory?.OnMutablePropertyChanged(args);
         }
     }

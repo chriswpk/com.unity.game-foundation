@@ -165,10 +165,10 @@ namespace UnityEngine.GameFoundation.Components
             if (m_EventsRegistered)
                 return;
 
-            GameFoundationSdk.initialized += OnGameFoundationInitialized;
-            GameFoundationSdk.initializationFailed += OnGameFoundationInitializationFailed;
-            GameFoundationSdk.willUninitialize += OnGameFoundationWillUninitialize;
-            GameFoundationSdk.uninitialized += OnGameFoundationUninitialized;
+            GameFoundationSystem.initialized += OnGameFoundationInitialized;
+            GameFoundationSystem.initializationFailed += OnGameFoundationInitializationFailed;
+            GameFoundationSystem.willUninitialize += OnGameFoundationWillUninitialize;
+            GameFoundationSystem.uninitialized += OnGameFoundationUninitialized;
 
             m_EventsRegistered = true;
         }
@@ -178,10 +178,10 @@ namespace UnityEngine.GameFoundation.Components
             if (!m_EventsRegistered)
                 return;
 
-            GameFoundationSdk.initialized -= OnGameFoundationInitialized;
-            GameFoundationSdk.initializationFailed -= OnGameFoundationInitializationFailed;
-            GameFoundationSdk.willUninitialize -= OnGameFoundationWillUninitialize;
-            GameFoundationSdk.uninitialized -= OnGameFoundationUninitialized;
+            GameFoundationSystem.initialized -= OnGameFoundationInitialized;
+            GameFoundationSystem.initializationFailed -= OnGameFoundationInitializationFailed;
+            GameFoundationSystem.willUninitialize -= OnGameFoundationWillUninitialize;
+            GameFoundationSystem.uninitialized -= OnGameFoundationUninitialized;
 
             m_EventsRegistered = false;
         }
@@ -197,7 +197,7 @@ namespace UnityEngine.GameFoundation.Components
                 return;
             }
 
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 k_GFLogger.LogWarning("Game Foundation is already initialized.");
                 return;
@@ -230,7 +230,7 @@ namespace UnityEngine.GameFoundation.Components
             // Initialize Game Foundation for runtime access.
             // The using instruction will automatically release the promise from initDeferred,
             // it optimizes the memory as it allows the promise to be reused.
-            using (var initDeferred = GameFoundationSdk.Initialize(dataLayer))
+            using (var initDeferred = GameFoundationSystem.Initialize(dataLayer))
             {
                 yield return initDeferred.Wait();
             }
@@ -247,13 +247,13 @@ namespace UnityEngine.GameFoundation.Components
                 return;
             }
 
-            if (!GameFoundationSdk.IsInitialized)
+            if (!GameFoundationSystem.IsInitialized)
             {
                 k_GFLogger.LogWarning("Game Foundation is not initialized.");
                 return;
             }
 
-            GameFoundationSdk.Uninitialize();
+            GameFoundationSystem.Uninitialize();
         }
 
         void OnGameFoundationInitialized()

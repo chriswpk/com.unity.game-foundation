@@ -76,11 +76,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnEnable()
         {
-            GameFoundationSdk.initialized += RegisterEvents;
-            GameFoundationSdk.initialized += InitializeComponentData;
-            GameFoundationSdk.willUninitialize += UnregisterEvents;
+            GameFoundationSystem.initialized += RegisterEvents;
+            GameFoundationSystem.initialized += InitializeComponentData;
+            GameFoundationSystem.willUninitialize += UnregisterEvents;
 
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 RegisterEvents();
             }
@@ -96,11 +96,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnDisable()
         {
-            GameFoundationSdk.initialized -= RegisterEvents;
-            GameFoundationSdk.initialized -= InitializeComponentData;
-            GameFoundationSdk.willUninitialize -= UnregisterEvents;
+            GameFoundationSystem.initialized -= RegisterEvents;
+            GameFoundationSystem.initialized -= InitializeComponentData;
+            GameFoundationSystem.willUninitialize -= UnregisterEvents;
 
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 UnregisterEvents();
             }
@@ -111,12 +111,12 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void RegisterEvents()
         {
-            if (GameFoundationSdk.inventory == null)
+            if (GameFoundationSystem.inventory == null)
                 return;
 
-            GameFoundationSdk.inventory.itemAdded += OnItemChanged;
-            GameFoundationSdk.inventory.itemDeleted += OnItemChanged;
-            GameFoundationSdk.inventory.itemQuantityChanged += OnItemQuantityChanged;
+            GameFoundationSystem.inventory.itemAdded += OnItemChanged;
+            GameFoundationSystem.inventory.itemDeleted += OnItemChanged;
+            GameFoundationSystem.inventory.itemQuantityChanged += OnItemQuantityChanged;
         }
 
         /// <summary>
@@ -124,12 +124,12 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void UnregisterEvents()
         {
-            if (GameFoundationSdk.inventory == null)
+            if (GameFoundationSystem.inventory == null)
                 return;
 
-            GameFoundationSdk.inventory.itemAdded -= OnItemChanged;
-            GameFoundationSdk.inventory.itemDeleted -= OnItemChanged;
-            GameFoundationSdk.inventory.itemQuantityChanged -= OnItemQuantityChanged;
+            GameFoundationSystem.inventory.itemAdded -= OnItemChanged;
+            GameFoundationSystem.inventory.itemDeleted -= OnItemChanged;
+            GameFoundationSystem.inventory.itemQuantityChanged -= OnItemQuantityChanged;
         }
 
         /// <summary>
@@ -143,13 +143,13 @@ namespace UnityEngine.GameFoundation.Components
                 return;
 
             // This is to catch the case where Game Foundation initialized before OnEnable added the GameFoundationSdk initialize listener.
-            if (GameFoundationSdk.IsInitialized && m_ItemDefinition is null)
+            if (GameFoundationSystem.IsInitialized && m_ItemDefinition is null)
             {
                 InitializeComponentData();
                 return;
             }
 
-            if (!GameFoundationSdk.IsInitialized)
+            if (!GameFoundationSystem.IsInitialized)
             {
                 k_GFLogger.Log("Waiting for initialization.");
                 m_IsDirty = true;
@@ -194,7 +194,7 @@ namespace UnityEngine.GameFoundation.Components
             if (!Application.isPlaying || string.IsNullOrEmpty(itemDefinitionKey))
                 return null;
 
-            var inventoryItemDefinition = GameFoundationSdk.catalog?.Find<InventoryItemDefinition>(itemDefinitionKey);
+            var inventoryItemDefinition = GameFoundationSystem.catalog?.Find<InventoryItemDefinition>(itemDefinitionKey);
             if (inventoryItemDefinition != null || !m_ShowDebugLogs) return inventoryItemDefinition;
 
             k_GFLogger.LogWarning($"InventoryItemDefinition \"{itemDefinitionKey}\" doesn't exist in Inventory catalog.");
@@ -284,7 +284,7 @@ namespace UnityEngine.GameFoundation.Components
             if (m_IsDirty)
             {
                 m_IsDirty = false;
-                if (GameFoundationSdk.IsInitialized &&
+                if (GameFoundationSystem.IsInitialized &&
                     (m_ItemDefinition is null && !string.IsNullOrEmpty(m_ItemDefinitionKey) ||
                      !(m_ItemDefinition is null) && m_ItemDefinition.key != m_ItemDefinitionKey))
                 {
@@ -309,7 +309,7 @@ namespace UnityEngine.GameFoundation.Components
             }
 #endif
 
-            if (Application.isPlaying && !GameFoundationSdk.IsInitialized)
+            if (Application.isPlaying && !GameFoundationSystem.IsInitialized)
             {
                 SetIconSprite(null);
                 SetQuantity(null);
@@ -396,7 +396,7 @@ namespace UnityEngine.GameFoundation.Components
         {
             if (!Application.isPlaying || m_ItemDefinition == null) return 0;
 
-            return GameFoundationSdk.inventory.GetTotalQuantity(itemDefinition);
+            return GameFoundationSystem.inventory.GetTotalQuantity(itemDefinition);
         }
 
         /// <summary>

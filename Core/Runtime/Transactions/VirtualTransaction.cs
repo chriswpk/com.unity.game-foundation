@@ -47,7 +47,7 @@ namespace UnityEngine.GameFoundation
             {
                 if (exchange.tradableDefinition is Currency payoutCurrency)
                 {
-                    var currentBalance = GameFoundationSdk.wallet.Get(payoutCurrency);
+                    var currentBalance = GameFoundationSystem.wallet.Get(payoutCurrency);
 
                     if (payoutCurrency.maximumBalance > 0
                         && currentBalance + exchange.amount > payoutCurrency.maximumBalance)
@@ -85,7 +85,7 @@ namespace UnityEngine.GameFoundation
 
                 using (Tools.Pools.inventoryItemList.Get(out var items))
                 {
-                    var itemCount = GameFoundationSdk.inventory.FindItems(definition, items);
+                    var itemCount = GameFoundationSystem.inventory.FindItems(definition, items);
 
                     // copy enough items to ensure fulfillment of the cost requirement
                     // note: because items may be stacks (which we've already validated quantity for), 

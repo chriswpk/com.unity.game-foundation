@@ -1,7 +1,7 @@
 namespace UnityEngine.GameFoundation
 {
     /// <summary>
-    ///     This object is used by <see cref="GameFoundationSdk"/> to update and launch coroutines.
+    ///     This object is used by <see cref="GameFoundationSystem"/> to update and launch coroutines.
     /// </summary>
     class GameFoundationUpdater : MonoBehaviour
     {

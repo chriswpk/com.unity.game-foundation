@@ -65,7 +65,7 @@ namespace UnityEngine.GameFoundation
         /// <returns>
         ///     true if new quantity is valid and set, else false.
         /// </returns>
-        public bool SetQuantity(long quantity) => GameFoundationSdk.inventory.SetQuantity(this, quantity);
+        public bool SetQuantity(long quantity) => GameFoundationSystem.inventory.SetQuantity(this, quantity);
 
         /// <summary>
         ///     Set new item quantity.
@@ -88,7 +88,7 @@ namespace UnityEngine.GameFoundation
             quantityChanged?.Invoke(this, oldQuantity);
 
             // directly tell the inventory manager to bubble up this event
-            (GameFoundationSdk.inventory as InventoryManagerImpl)
+            (GameFoundationSystem.inventory as InventoryManagerImpl)
                 ?.HandleStackableQuantityChanged(this, oldQuantity);
         }
     }

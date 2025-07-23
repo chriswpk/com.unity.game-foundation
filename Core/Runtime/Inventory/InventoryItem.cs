@@ -104,7 +104,7 @@ namespace UnityEngine.GameFoundation
 
             m_ItemCollections.Add(itemCollection);
 
-            var inventory = GameFoundationSdk.inventory as InventoryManagerImpl;
+            var inventory = GameFoundationSystem.inventory as InventoryManagerImpl;
             inventory?.OnItemAddedToCollection(itemCollection, this);
         }
 
@@ -126,7 +126,7 @@ namespace UnityEngine.GameFoundation
                 return false;
             }
 
-            var inventory = GameFoundationSdk.inventory as InventoryManagerImpl;
+            var inventory = GameFoundationSystem.inventory as InventoryManagerImpl;
             inventory?.OnItemRemovedFromCollection(itemCollection, this);
 
             return true;
@@ -174,7 +174,7 @@ namespace UnityEngine.GameFoundation
                 return;
             }
 
-            var inventory = GameFoundationSdk.inventory as InventoryManagerImpl;
+            var inventory = GameFoundationSystem.inventory as InventoryManagerImpl;
 
             foreach (var collection in m_ItemCollections)
             {

@@ -314,7 +314,7 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         private void Awake()
         {
-            if (Application.isPlaying && !GameFoundationSdk.IsInitialized)
+            if (Application.isPlaying && !GameFoundationSystem.IsInitialized)
             {
                 ClearRewardItemPrefabs();
             }
@@ -326,11 +326,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnEnable()
         {
-            GameFoundationSdk.initialized += RegisterEvents;
-            GameFoundationSdk.initialized += InitializeComponentData;
-            GameFoundationSdk.willUninitialize += UnregisterEvents;
+            GameFoundationSystem.initialized += RegisterEvents;
+            GameFoundationSystem.initialized += InitializeComponentData;
+            GameFoundationSystem.willUninitialize += UnregisterEvents;
 
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 RegisterEvents();
             }
@@ -347,11 +347,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnDisable()
         {
-            GameFoundationSdk.initialized -= RegisterEvents;
-            GameFoundationSdk.initialized -= InitializeComponentData;
-            GameFoundationSdk.willUninitialize -= UnregisterEvents;
+            GameFoundationSystem.initialized -= RegisterEvents;
+            GameFoundationSystem.initialized -= InitializeComponentData;
+            GameFoundationSystem.willUninitialize -= UnregisterEvents;
 
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 UnregisterEvents();
             }
@@ -364,10 +364,10 @@ namespace UnityEngine.GameFoundation.Components
         {
             Reward.rewardStateChanged += OnRewardStateChanged;
 
-            if (GameFoundationSdk.rewards == null)
+            if (GameFoundationSystem.rewards == null)
                 return;
 
-            GameFoundationSdk.rewards.rewardItemClaimSucceeded += OnRewardClaimSucceeded;
+            GameFoundationSystem.rewards.rewardItemClaimSucceeded += OnRewardClaimSucceeded;
         }
 
         /// <summary>
@@ -377,10 +377,10 @@ namespace UnityEngine.GameFoundation.Components
         {
             Reward.rewardStateChanged -= OnRewardStateChanged;
 
-            if (GameFoundationSdk.rewards == null)
+            if (GameFoundationSystem.rewards == null)
                 return;
 
-            GameFoundationSdk.rewards.rewardItemClaimSucceeded -= OnRewardClaimSucceeded;
+            GameFoundationSystem.rewards.rewardItemClaimSucceeded -= OnRewardClaimSucceeded;
         }
 
         /// <summary>
@@ -396,7 +396,7 @@ namespace UnityEngine.GameFoundation.Components
                 return;
             }
 
-            if (!GameFoundationSdk.IsInitialized)
+            if (!GameFoundationSystem.IsInitialized)
             {
                 k_GFLogger.Log("Waiting for initialization.");
                 m_IsDirty = true;
@@ -404,7 +404,7 @@ namespace UnityEngine.GameFoundation.Components
             }
 
             // This is to catch the case where Game Foundation initialized before OnEnable added the GameFoundationSdk initialize listener.
-            if (GameFoundationSdk.IsInitialized && m_Reward is null)
+            if (GameFoundationSystem.IsInitialized && m_Reward is null)
             {
                 InitializeComponentData();
             }
@@ -443,7 +443,7 @@ namespace UnityEngine.GameFoundation.Components
             if (!Application.isPlaying || string.IsNullOrEmpty(rewardKey))
                 return null;
 
-            var reward = GameFoundationSdk.rewards?.FindReward(rewardKey);
+            var reward = GameFoundationSystem.rewards?.FindReward(rewardKey);
 
             if (reward != null || !m_ShowDebugLogs)
                 return reward;
@@ -531,7 +531,7 @@ namespace UnityEngine.GameFoundation.Components
                 return;
             }
             
-            if (!GameFoundationSdk.IsInitialized)
+            if (!GameFoundationSystem.IsInitialized)
             {
                 k_GFLogger.Log("Reward Popup has been opened when Game Foundation Sdk is not initialized. Content will be blank until Game Foundation initializes and no changes to state have been made.");
                 m_Reward = null;
@@ -847,7 +847,7 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void LateUpdate()
         {
-            if (!GameFoundationSdk.IsInitialized)
+            if (!GameFoundationSystem.IsInitialized)
                 return;
 
             m_TimeSinceLastCountdownUpdate += Time.deltaTime;
@@ -867,7 +867,7 @@ namespace UnityEngine.GameFoundation.Components
             if (m_CountdownTextField is null)
                 return;
 
-            if (Application.isPlaying && !GameFoundationSdk.IsInitialized)
+            if (Application.isPlaying && !GameFoundationSystem.IsInitialized)
             {
                 m_CountdownTextField.text = string.Empty;
                 return;
@@ -976,7 +976,7 @@ namespace UnityEngine.GameFoundation.Components
                 // UpdateContent doesn't update m_Currency, which is what is used to fetch icons at runtime.
                 // If Game Foundation is initialized and m_Currency does not match m_CurrencyKey,
                 // reset m_Currency based on m_CurrencyKey.
-                if (GameFoundationSdk.IsInitialized &&
+                if (GameFoundationSystem.IsInitialized &&
                     (m_Reward is null && !string.IsNullOrEmpty(m_RewardKey) || 
                      !(m_Reward is null) && m_Reward.key != m_RewardKey))
                 {

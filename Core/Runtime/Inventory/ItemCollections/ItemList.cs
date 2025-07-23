@@ -101,7 +101,7 @@ namespace UnityEngine.GameFoundation
                 AddInternal(inventoryItem);
 
                 // sync adding the item to the data layer
-                (GameFoundationSdk.inventory as InventoryManagerImpl).SyncItemListAddItem(id, inventoryItem.id);
+                (GameFoundationSystem.inventory as InventoryManagerImpl).SyncItemListAddItem(id, inventoryItem.id);
             }
         }
 
@@ -317,7 +317,7 @@ namespace UnityEngine.GameFoundation
             m_InventoryItems[index0] = m_InventoryItems[index1];
             m_InventoryItems[index1] = inventoryItem;
 
-            (GameFoundationSdk.inventory as InventoryManagerImpl).SyncItemListSwapIndexes(id, index0, index1);
+            (GameFoundationSystem.inventory as InventoryManagerImpl).SyncItemListSwapIndexes(id, index0, index1);
         }
 
         /// <inheritdoc/>
@@ -385,7 +385,7 @@ namespace UnityEngine.GameFoundation
             m_InventoryItems.RemoveAt(index);
 
             // sync the removal with data layer
-            (GameFoundationSdk.inventory as InventoryManagerImpl).SyncItemListRemoveItem(id, item.id);
+            (GameFoundationSystem.inventory as InventoryManagerImpl).SyncItemListRemoveItem(id, item.id);
         }
 
         /// <inheritdoc/>
@@ -443,7 +443,7 @@ namespace UnityEngine.GameFoundation
             m_InventoryItems.Remove(inventoryItem);
 
             // sync the removal with data layer
-            (GameFoundationSdk.inventory as InventoryManagerImpl).SyncItemListRemoveItem(id, inventoryItem.id);
+            (GameFoundationSystem.inventory as InventoryManagerImpl).SyncItemListRemoveItem(id, inventoryItem.id);
         }
 
         /// <inheritdoc/>
@@ -459,7 +459,7 @@ namespace UnityEngine.GameFoundation
             m_InventoryItems.Clear();
 
             // sync clear with data layer
-            (GameFoundationSdk.inventory as InventoryManagerImpl).SyncItemListClear(id);
+            (GameFoundationSystem.inventory as InventoryManagerImpl).SyncItemListClear(id);
         }
 
         /// <summary>
@@ -501,7 +501,7 @@ namespace UnityEngine.GameFoundation
         {
             AssertActive();
 
-            var newItem = GameFoundationSdk.inventory.CreateItem(itemDefinition);
+            var newItem = GameFoundationSystem.inventory.CreateItem(itemDefinition);
             Add(newItem);
 
             return newItem;

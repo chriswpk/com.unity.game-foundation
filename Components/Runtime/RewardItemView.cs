@@ -124,7 +124,7 @@ namespace UnityEngine.GameFoundation.Components
                 return;
             }
 
-            if (!GameFoundationSdk.IsInitialized)
+            if (!GameFoundationSystem.IsInitialized)
             {
                 k_GFLogger.Log("Waiting for initialization.");
                 return;
@@ -170,7 +170,7 @@ namespace UnityEngine.GameFoundation.Components
                                        || string.IsNullOrEmpty(rewardItemDefinitionKey))
                 return null;
 
-            var rewardDefinition = GameFoundationSdk.catalog?.Find<RewardDefinition>(rewardDefinitionKey);
+            var rewardDefinition = GameFoundationSystem.catalog?.Find<RewardDefinition>(rewardDefinitionKey);
             if (rewardDefinition == null)
             {
                 if (m_ShowDebugLogs)
@@ -300,7 +300,7 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void UpdateContentAtRuntime()
         {
-            var rewardDefinition = !string.IsNullOrEmpty(m_RewardDefinitionKey) ? GameFoundationSdk.catalog
+            var rewardDefinition = !string.IsNullOrEmpty(m_RewardDefinitionKey) ? GameFoundationSystem.catalog
                 .Find<RewardDefinition>(m_RewardDefinitionKey) : null;
             if (rewardDefinition != null && m_RewardItemDefinition != null)
             {

@@ -19,7 +19,7 @@ namespace UnityEngine.GameFoundation
         /// <summary>
         ///     Gets the <see cref="IInventoryDataLayer"/> aspect of the data layer.
         /// </summary>
-        static IInventoryDataLayer dataLayer => GameFoundationSdk.dataLayer;
+        static IInventoryDataLayer dataLayer => GameFoundationSystem.dataLayer;
 
         /// <inheritdoc cref="IInventoryManager.itemAdded"/>
         public event Action<InventoryItem> itemAdded;
@@ -62,7 +62,7 @@ namespace UnityEngine.GameFoundation
         protected override void InitializeData(Completer completer, GameFoundationInitOptions initOptions = null)
         {
             var inventoryManagerData = dataLayer.GetData();
-            var catalog = GameFoundationSdk.catalog;
+            var catalog = GameFoundationSystem.catalog;
 
             foreach (var itemData in inventoryManagerData.items)
             {

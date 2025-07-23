@@ -1,7 +1,7 @@
 namespace UnityEngine.GameFoundation
 {
     /// <summary>
-    ///     Pass an instance of this class into <see cref="GameFoundationSdk.Initialize"/>
+    ///     Pass an instance of this class into <see cref="GameFoundationSystem.Initialize"/>
     ///     if you want to provide or override certain dependencies in Game Foundation's subsystems.
     /// </summary>
     class GameFoundationInitOptions

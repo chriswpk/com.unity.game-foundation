@@ -17,7 +17,7 @@ namespace UnityEngine.GameFoundation
         /// <summary>
         ///     Accessor to GameFoundation's current DAL.
         /// </summary>
-        static IWalletDataLayer dataLayer => GameFoundationSdk.dataLayer;
+        static IWalletDataLayer dataLayer => GameFoundationSystem.dataLayer;
 
         /// <inheritdoc cref="IWalletManager.balanceChanged"/>
         event Action<IQuantifiable, long> balanceChanged;
@@ -38,7 +38,7 @@ namespace UnityEngine.GameFoundation
         {
             var data = dataLayer.GetData();
             var currencies = new List<Currency>();
-            GameFoundationSdk.catalog.GetItems(currencies);
+            GameFoundationSystem.catalog.GetItems(currencies);
 
             foreach (var currency in currencies)
             {

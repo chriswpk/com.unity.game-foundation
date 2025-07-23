@@ -175,7 +175,7 @@ namespace UnityEngine.GameFoundation
         /// <inheritdoc/>
         internal override bool VerifyCost(long cost, out Exception failReason)
         {
-            var itemQuantity = GameFoundationSdk.inventory.GetTotalQuantity(this);
+            var itemQuantity = GameFoundationSystem.inventory.GetTotalQuantity(this);
             var canPay = itemQuantity >= cost;
 
             failReason = canPay ? null : new NotEnoughItemOfDefinitionException(key, cost, itemQuantity);

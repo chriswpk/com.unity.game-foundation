@@ -179,7 +179,7 @@ namespace UnityEditor.GameFoundation.Debugging
 
                         //Get Inventory from tree item parent to get InventoryItem
                         var inventoryItem = itemView.inventoryItem;
-                        GameFoundationSdk.inventory.Delete(inventoryItem);
+                        GameFoundationSystem.inventory.Delete(inventoryItem);
                         CorrectFoldouts(viewItem);
                     }
 
@@ -316,12 +316,12 @@ namespace UnityEditor.GameFoundation.Debugging
                     {
                         var currency = currencyView.currency;
 
-                        var balance = GameFoundationSdk.wallet.Get(currency);
+                        var balance = GameFoundationSystem.wallet.Get(currency);
 
                         var newValue = EditorGUI.LongField(cellRect, balance, guiStyle);
                         if (newValue != balance)
                         {
-                            var done = GameFoundationSdk.wallet.Set(currency, newValue);
+                            var done = GameFoundationSystem.wallet.Set(currency, newValue);
                             if (!done)
                             {
                                 string errorMessage = "Debugger asked WalletManager to change the balance of " +
@@ -515,7 +515,7 @@ namespace UnityEditor.GameFoundation.Debugging
 
         TreeViewItem GenerateInventoryTreeRoot()
         {
-            if (GameFoundationSdk.catalog is null || GameFoundationSdk.inventory is null)
+            if (GameFoundationSystem.catalog is null || GameFoundationSystem.inventory is null)
             {
                 return new TreeViewItem(0, -1, "Root");
             }
@@ -529,7 +529,7 @@ namespace UnityEditor.GameFoundation.Debugging
 
             using (GFTools.Pools.currencyList.Get(out var currencies))
             {
-                GameFoundationSdk.catalog.GetItems(currencies);
+                GameFoundationSystem.catalog.GetItems(currencies);
                 foreach (var currency in currencies)
                 {
                     var currencyView = new CurrencyView(id++, 1, $"{currency.displayName}", currency);
@@ -541,7 +541,7 @@ namespace UnityEditor.GameFoundation.Debugging
             var itemsView = new TreeViewItem(id++, 0, "Inventory");
             rootView.AddChild(itemsView);
 
-            GameFoundationSdk.inventory.GetItems(m_InventoryItems);
+            GameFoundationSystem.inventory.GetItems(m_InventoryItems);
 
             var itemDefinitionNodes = new Dictionary<string, TreeViewItem>(m_InventoryItems.Count);
             foreach (var item in m_InventoryItems)
@@ -591,7 +591,7 @@ namespace UnityEditor.GameFoundation.Debugging
             var rewardDefinitionsView = new TreeViewItem(id++, 0, "Rewards");
             using (GFTools.Pools.rewardList.Get(out var rewards))
             {
-                GameFoundationSdk.rewards.GetRewards(rewards);
+                GameFoundationSystem.rewards.GetRewards(rewards);
                 if (rewards.Count > 0)
                 {
                     rootView.AddChild(rewardDefinitionsView);
@@ -635,51 +635,51 @@ namespace UnityEditor.GameFoundation.Debugging
 
         internal void AttachListeners()
         {
-            GameFoundationSdk.initialized += SubscribeIfPossible;
+            GameFoundationSystem.initialized += SubscribeIfPossible;
             SubscribeIfPossible();
         }
 
         internal void DetachListeners()
         {
-            GameFoundationSdk.initialized -= SubscribeIfPossible;
+            GameFoundationSystem.initialized -= SubscribeIfPossible;
             UnsubscribeIfNecessary();
         }
 
         void SubscribeIfPossible()
         {
-            if (GameFoundationSdk.inventory is null)
+            if (GameFoundationSystem.inventory is null)
             {
                 m_SubscribedInventory = null;
             }
-            else if (!ReferenceEquals(GameFoundationSdk.inventory, m_SubscribedInventory))
+            else if (!ReferenceEquals(GameFoundationSystem.inventory, m_SubscribedInventory))
             {
-                GameFoundationSdk.inventory.itemAdded += OnItemAddedOrRemoved;
-                GameFoundationSdk.inventory.itemDeleted += OnItemAddedOrRemoved;
-                GameFoundationSdk.inventory.itemQuantityChanged += OnQuantifiableChanged;
-                GameFoundationSdk.inventory.itemMutablePropertyChanged += OnPropertyChanged;
-                m_SubscribedInventory = GameFoundationSdk.inventory;
+                GameFoundationSystem.inventory.itemAdded += OnItemAddedOrRemoved;
+                GameFoundationSystem.inventory.itemDeleted += OnItemAddedOrRemoved;
+                GameFoundationSystem.inventory.itemQuantityChanged += OnQuantifiableChanged;
+                GameFoundationSystem.inventory.itemMutablePropertyChanged += OnPropertyChanged;
+                m_SubscribedInventory = GameFoundationSystem.inventory;
             }
 
-            if (GameFoundationSdk.wallet is null)
+            if (GameFoundationSystem.wallet is null)
             {
                 m_SubscribedWallet = null;
             }
-            else if (!ReferenceEquals(GameFoundationSdk.wallet, m_SubscribedWallet))
+            else if (!ReferenceEquals(GameFoundationSystem.wallet, m_SubscribedWallet))
             {
-                GameFoundationSdk.wallet.balanceChanged += OnQuantifiableChanged;
-                m_SubscribedWallet = GameFoundationSdk.wallet;
+                GameFoundationSystem.wallet.balanceChanged += OnQuantifiableChanged;
+                m_SubscribedWallet = GameFoundationSystem.wallet;
             }
 
-            if (GameFoundationSdk.rewards is null)
+            if (GameFoundationSystem.rewards is null)
             {
                 m_SubscribedRewards = null;
             }
-            else if (!ReferenceEquals(GameFoundationSdk.rewards, m_SubscribedRewards))
+            else if (!ReferenceEquals(GameFoundationSystem.rewards, m_SubscribedRewards))
             {
-                GameFoundationSdk.rewards.rewardItemClaimFailed += OnRewardClaimFailed;
-                GameFoundationSdk.rewards.rewardItemClaimSucceeded += OnRewardClaimSucceeded;
+                GameFoundationSystem.rewards.rewardItemClaimFailed += OnRewardClaimFailed;
+                GameFoundationSystem.rewards.rewardItemClaimSucceeded += OnRewardClaimSucceeded;
                 Reward.rewardStateChanged += OnRewardStateChanged;
-                m_SubscribedRewards = GameFoundationSdk.rewards;
+                m_SubscribedRewards = GameFoundationSystem.rewards;
             }
         }
 
