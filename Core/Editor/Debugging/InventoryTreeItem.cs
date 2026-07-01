@@ -3,7 +3,7 @@ using UnityEngine.GameFoundation;
 
 namespace UnityEditor.GameFoundation.Debugging
 {
-    sealed class InventoryItemDefinitionView : TreeViewItem
+    sealed class InventoryItemDefinitionView : TreeViewItem<int>
     {
         public InventoryItemDefinition definition { get; }
 
@@ -19,7 +19,7 @@ namespace UnityEditor.GameFoundation.Debugging
         }
     }
 
-    sealed class InventoryItemView : TreeViewItem
+    sealed class InventoryItemView : TreeViewItem<int>
     {
         public readonly InventoryItem inventoryItem;
 
@@ -35,7 +35,7 @@ namespace UnityEditor.GameFoundation.Debugging
         }
     }
 
-    sealed class PropertyView : TreeViewItem
+    sealed class PropertyView : TreeViewItem<int>
     {
         public readonly InventoryItem inventoryItem;
 
@@ -57,7 +57,7 @@ namespace UnityEditor.GameFoundation.Debugging
         }
     }
 
-    sealed class CurrencyView : TreeViewItem
+    sealed class CurrencyView : TreeViewItem<int>
     {
         public readonly Currency currency;
 
@@ -75,7 +75,7 @@ namespace UnityEditor.GameFoundation.Debugging
         }
     }
 
-    sealed class RewardView : TreeViewItem
+    sealed class RewardView : TreeViewItem<int>
     {
         public readonly Reward reward;
 
@@ -89,10 +89,10 @@ namespace UnityEditor.GameFoundation.Debugging
             return $"{nameof(RewardView)} key:{reward.rewardDefinition.key}";
         }
     }
-    
-    sealed class RewardItemView : TreeViewItem
+
+    sealed class RewardItemView : TreeViewItem<int>
     {
-        
+
         public readonly Reward reward;
 
         public readonly (string key, RewardItemState value) rewardItem;

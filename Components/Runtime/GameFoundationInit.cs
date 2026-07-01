@@ -5,7 +5,6 @@ using UnityEngine.Events;
 using UnityEngine.GameFoundation.DefaultCatalog;
 using UnityEngine.GameFoundation.DefaultLayers;
 using UnityEngine.GameFoundation.DefaultLayers.Persistence;
-using UnityEngine.Serialization;
 
 namespace UnityEngine.GameFoundation.Components
 {
@@ -113,7 +112,7 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         static readonly GameFoundationDebug k_GFLogger = GameFoundationDebug.Get<GameFoundationInit>();
 
-        void Awake()
+        private void Start()
         {
             if (!Application.isPlaying)
                 return;
@@ -141,7 +140,7 @@ namespace UnityEngine.GameFoundation.Components
             }
         }
 
-        void OnEnable()
+        private void OnEnable()
         {
 #if UNITY_EDITOR
             if (instance == null)
@@ -152,7 +151,7 @@ namespace UnityEngine.GameFoundation.Components
             RegisterEvents();
         }
 
-        void OnDisable()
+        private void OnDisable()
         {
 #if UNITY_EDITOR
             instance = null;

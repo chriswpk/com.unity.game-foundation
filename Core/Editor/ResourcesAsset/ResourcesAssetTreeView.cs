@@ -4,13 +4,13 @@ using UnityEngine;
 
 namespace UnityEditor.GameFoundation
 {
-    class ResourcesAssetTreeView : TreeView
+    class ResourcesAssetTreeView : TreeView<int>
     {
         readonly ResourcesAssetDrawer m_Drawer;
 
         readonly ResourcesAssetPopup m_Popup;
 
-        public ResourcesAssetTreeView(TreeViewState state, ResourcesAssetDrawer drawer, ResourcesAssetPopup popup)
+        public ResourcesAssetTreeView(TreeViewState<int> state, ResourcesAssetDrawer drawer, ResourcesAssetPopup popup)
             : base(state)
         {
             m_Drawer = drawer;
@@ -19,7 +19,7 @@ namespace UnityEditor.GameFoundation
             showAlternatingRowBackgrounds = true;
         }
 
-        protected override bool CanMultiSelect(TreeViewItem item)
+        protected override bool CanMultiSelect(TreeViewItem<int> item)
         {
             return false;
         }
@@ -47,12 +47,12 @@ namespace UnityEditor.GameFoundation
             }
         }
 
-        protected override TreeViewItem BuildRoot()
+        protected override TreeViewItem<int> BuildRoot()
         {
             var resourcesFolderPaths = ResourcesAssetUtility.GetAllResourcesFolderPaths();
 
             var depth = -1;
-            var root = new TreeViewItem("root".GetHashCode(), depth);
+            var root = new TreeViewItem<int>("root".GetHashCode(), depth);
             ++depth;
 
             var emptyNode = new ResourcesAssetTreeViewItem(
@@ -67,7 +67,7 @@ namespace UnityEditor.GameFoundation
             {
                 pathHash.Clear();
 
-                var folderNode = new TreeViewItem(resourcesFolderPath.GetHashCode(), depth, resourcesFolderPath);
+                var folderNode = new TreeViewItem<int>(resourcesFolderPath.GetHashCode(), depth, resourcesFolderPath);
 
                 ++depth;
                 var assetGuids = AssetDatabase.FindAssets("", new[] { resourcesFolderPath });

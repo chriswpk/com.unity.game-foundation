@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace UnityEditor.GameFoundation
 {
-    sealed class ResourcesAssetTreeViewItem : TreeViewItem
+    sealed class ResourcesAssetTreeViewItem : TreeViewItem<int>
     {
         public readonly string assetPath;
 

@@ -7,7 +7,7 @@ using GFTools = UnityEngine.GameFoundation.Tools;
 
 namespace UnityEditor.GameFoundation.Debugging
 {
-    class InventoryTree : TreeView
+    class InventoryTree : TreeView<int>
     {
         enum Columns
         {
@@ -24,7 +24,7 @@ namespace UnityEditor.GameFoundation.Debugging
         ///     Contain all tree view item holding data about GameFoundation items.
         ///     Utility nodes like "Wallet" or "Items" are not included.
         /// </summary>
-        List<TreeViewItem> m_AllTreeViewItems = new List<TreeViewItem>();
+        List<TreeViewItem<int>> m_AllTreeViewItems = new List<TreeViewItem<int>>();
 
         IList<int> m_ExpandedIdsBeforeSearch;
 
@@ -62,8 +62,8 @@ namespace UnityEditor.GameFoundation.Debugging
         /// </summary>
         static readonly GameFoundationDebug k_GFLogger = GameFoundationDebug.Get<InventoryTree>();
 
-        public InventoryTree(DebugEditorWindow owner, TreeViewState state = null, MultiColumnHeader multiColumnHeader = null)
-            : base(state ?? new TreeViewState(), multiColumnHeader)
+        public InventoryTree(DebugEditorWindow owner, TreeViewState<int> state = null, MultiColumnHeader multiColumnHeader = null)
+            : base(state ?? new TreeViewState<int>(), multiColumnHeader)
         {
             m_Owner = owner;
             showBorder = true;
@@ -92,7 +92,7 @@ namespace UnityEditor.GameFoundation.Debugging
             state.selectedIDs.Add(id);
         }
 
-        protected override TreeViewItem BuildRoot()
+        protected override TreeViewItem<int> BuildRoot()
         {
             var inventoryRoot = GenerateInventoryTreeRoot();
 
@@ -114,7 +114,7 @@ namespace UnityEditor.GameFoundation.Debugging
 
             if (!inventoryRoot.hasChildren)
             {
-                inventoryRoot.AddChild(new TreeViewItem());
+                inventoryRoot.AddChild(new TreeViewItem<int>());
             }
 
             return inventoryRoot;
@@ -133,31 +133,31 @@ namespace UnityEditor.GameFoundation.Debugging
         }
 
         //This function processes a single cell based on the column its in and renders it in a different way.
-        void CellGUI(Rect cellRect, TreeViewItem viewItem, Columns column)
+        void CellGUI(Rect cellRect, TreeViewItem<int> viewItem, Columns column)
         {
             CenterRectUsingSingleLineHeight(ref cellRect);
 
             switch (column)
             {
                 case Columns.Items:
-                {
-                    ItemColumnGUI(cellRect, viewItem);
-                    break;
-                }
+                    {
+                        ItemColumnGUI(cellRect, viewItem);
+                        break;
+                    }
                 case Columns.Value:
-                {
-                    ValueColumnGUI(cellRect, viewItem);
-                    break;
-                }
+                    {
+                        ValueColumnGUI(cellRect, viewItem);
+                        break;
+                    }
                 case Columns.Action:
-                {
-                    ActionColumnGUI(cellRect, viewItem);
-                    break;
-                }
+                    {
+                        ActionColumnGUI(cellRect, viewItem);
+                        break;
+                    }
             }
         }
 
-        void ActionColumnGUI(Rect cellRect, TreeViewItem viewItem)
+        void ActionColumnGUI(Rect cellRect, TreeViewItem<int> viewItem)
         {
             var buttonStyle = new GUIStyle(GUI.skin.button)
             {
@@ -170,40 +170,40 @@ namespace UnityEditor.GameFoundation.Debugging
             switch (viewItem)
             {
                 case InventoryItemView itemView:
-                {
-                    var clicked = GUI.Button(centeredButtonPosition, "Delete", buttonStyle);
-
-                    if (clicked)
                     {
-                        HandleSelectionRemoved(viewItem);
+                        var clicked = GUI.Button(centeredButtonPosition, "Delete", buttonStyle);
 
-                        //Get Inventory from tree item parent to get InventoryItem
-                        var inventoryItem = itemView.inventoryItem;
-                        GameFoundationSystem.inventory.Delete(inventoryItem);
-                        CorrectFoldouts(viewItem);
+                        if (clicked)
+                        {
+                            HandleSelectionRemoved(viewItem);
+
+                            //Get Inventory from tree item parent to get InventoryItem
+                            var inventoryItem = itemView.inventoryItem;
+                            GameFoundationSystem.inventory.Delete(inventoryItem);
+                            CorrectFoldouts(viewItem);
+                        }
+
+                        break;
                     }
-
-                    break;
-                }
 
                 case PropertyView propertyView:
-                {
-                    var clicked = GUI.Button(centeredButtonPosition, "Reset", buttonStyle);
-
-                    if (clicked)
                     {
-                        var inventoryItem = propertyView.inventoryItem;
-                        var definition = propertyView.property;
-                        inventoryItem.ResetMutableProperty(definition.key);
-                        CorrectFoldouts(viewItem);
-                    }
+                        var clicked = GUI.Button(centeredButtonPosition, "Reset", buttonStyle);
 
-                    break;
-                }
+                        if (clicked)
+                        {
+                            var inventoryItem = propertyView.inventoryItem;
+                            var definition = propertyView.property;
+                            inventoryItem.ResetMutableProperty(definition.key);
+                            CorrectFoldouts(viewItem);
+                        }
+
+                        break;
+                    }
             }
         }
 
-        void ValueColumnGUI(Rect cellRect, TreeViewItem viewItem)
+        void ValueColumnGUI(Rect cellRect, TreeViewItem<int> viewItem)
         {
             var guiStyle = new GUIStyle(IsSelected(viewItem.id) ? GUI.skin.textField : GUI.skin.label)
             {
@@ -230,54 +230,54 @@ namespace UnityEditor.GameFoundation.Debugging
                         switch (definition.value.type)
                         {
                             case PropertyType.Long:
-                            {
-                                newValue = EditorGUI.LongField(cellRect, property, guiStyle);
+                                {
+                                    newValue = EditorGUI.LongField(cellRect, property, guiStyle);
 
-                                break;
-                            }
+                                    break;
+                                }
 
                             case PropertyType.Double:
-                            {
-                                newValue = EditorGUI.DoubleField(cellRect, property, guiStyle);
+                                {
+                                    newValue = EditorGUI.DoubleField(cellRect, property, guiStyle);
 
-                                break;
-                            }
+                                    break;
+                                }
 
                             case PropertyType.Bool:
-                            {
-                                newValue = EditorGUI.Toggle(cellRect, property, guiStyle);
+                                {
+                                    newValue = EditorGUI.Toggle(cellRect, property, guiStyle);
 
-                                break;
-                            }
+                                    break;
+                                }
 
                             case PropertyType.String:
-                            {
-                                newValue = EditorGUI.TextField(cellRect, property, guiStyle);
+                                {
+                                    newValue = EditorGUI.TextField(cellRect, property, guiStyle);
 
-                                break;
-                            }
+                                    break;
+                                }
 
                             //Not merged with String case since this is bound to change soon.
                             case PropertyType.ResourcesAsset:
-                            {
-                                if (m_ResourcesAssetDrawer == null)
                                 {
-                                    m_ResourcesAssetDrawer = new ResourcesAssetDrawer();
+                                    if (m_ResourcesAssetDrawer == null)
+                                    {
+                                        m_ResourcesAssetDrawer = new ResourcesAssetDrawer();
+                                    }
+
+                                    var assetPath = property.AsString();
+                                    assetPath = m_ResourcesAssetDrawer.Draw(cellRect, assetPath, null);
+                                    newValue = Property.CreateAssetProperty(assetPath);
+
+                                    break;
                                 }
 
-                                var assetPath = property.AsString();
-                                assetPath = m_ResourcesAssetDrawer.Draw(cellRect, assetPath, null);
-                                newValue = Property.CreateAssetProperty(assetPath);
-
-                                break;
-                            }
-
                             case PropertyType.Addressables:
-                            {
-                                newValue = EditorGUI.TextField(cellRect, property, guiStyle);
+                                {
+                                    newValue = EditorGUI.TextField(cellRect, property, guiStyle);
 
-                                break;
-                            }
+                                    break;
+                                }
 
                             default:
                                 throw new ArgumentOutOfRangeException(
@@ -385,7 +385,7 @@ namespace UnityEditor.GameFoundation.Debugging
             }
         }
 
-        void ItemColumnGUI(Rect cellRect, TreeViewItem viewItem)
+        void ItemColumnGUI(Rect cellRect, TreeViewItem<int> viewItem)
         {
             //Make Room for Icon between Arrow and Label
             Rect tempRect = cellRect;
@@ -400,9 +400,9 @@ namespace UnityEditor.GameFoundation.Debugging
             GUI.Label(tempRect, labelText, DefaultStyles.label);
         }
 
-        void FilterRootOnSearch(TreeViewItem root, string search, IEnumerable<TreeViewItem> allItems)
+        void FilterRootOnSearch(TreeViewItem<int> root, string search, IEnumerable<TreeViewItem<int>> allItems)
         {
-            var foundItems = new List<TreeViewItem>();
+            var foundItems = new List<TreeViewItem<int>>();
             foreach (var item in allItems)
             {
                 var searchableString = GetSearchableString(item);
@@ -422,7 +422,7 @@ namespace UnityEditor.GameFoundation.Debugging
             RemoveCollapsedChildrenAndLeafsNotMatchingSearchResultRecursive(root, foundItems);
         }
 
-        void RemoveCollapsedChildrenAndLeafsNotMatchingSearchResultRecursive(TreeViewItem item, List<TreeViewItem> foundItems)
+        void RemoveCollapsedChildrenAndLeafsNotMatchingSearchResultRecursive(TreeViewItem<int> item, List<TreeViewItem<int>> foundItems)
         {
             if (!item.hasChildren)
                 return;
@@ -448,7 +448,7 @@ namespace UnityEditor.GameFoundation.Debugging
             }
         }
 
-        static IEnumerable<int> AddItemAndItsAncestorsIDs(TreeViewItem item)
+        static IEnumerable<int> AddItemAndItsAncestorsIDs(TreeViewItem<int> item)
         {
             var results = new List<int> { item.id };
             var cur = item;
@@ -461,7 +461,7 @@ namespace UnityEditor.GameFoundation.Debugging
             return results;
         }
 
-        void HandleSelectionRemoved(TreeViewItem item)
+        void HandleSelectionRemoved(TreeViewItem<int> item)
         {
             var selectedIds = new List<int>(GetSelection());
             selectedIds.Remove(item.id);
@@ -483,9 +483,9 @@ namespace UnityEditor.GameFoundation.Debugging
         /// <param name="deletedItem">
         ///     The removed row.
         /// </param>
-        void CorrectFoldouts(TreeViewItem deletedItem)
+        void CorrectFoldouts(TreeViewItem<int> deletedItem)
         {
-            int GetLastId(TreeViewItem item)
+            int GetLastId(TreeViewItem<int> item)
             {
                 while (item.hasChildren)
                 {
@@ -513,18 +513,18 @@ namespace UnityEditor.GameFoundation.Debugging
             }
         }
 
-        TreeViewItem GenerateInventoryTreeRoot()
+        TreeViewItem<int> GenerateInventoryTreeRoot()
         {
             if (GameFoundationSystem.catalog is null || GameFoundationSystem.inventory is null)
             {
-                return new TreeViewItem(0, -1, "Root");
+                return new TreeViewItem<int>(0, -1, "Root");
             }
 
             var id = 0;
             m_AllTreeViewItems.Clear();
-            var rootView = new TreeViewItem(id++, -1, "Root");
+            var rootView = new TreeViewItem<int>(id++, -1, "Root");
 
-            var currenciesView = new TreeViewItem(id++, 0, "Wallet");
+            var currenciesView = new TreeViewItem<int>(id++, 0, "Wallet");
             rootView.AddChild(currenciesView);
 
             using (GFTools.Pools.currencyList.Get(out var currencies))
@@ -538,12 +538,12 @@ namespace UnityEditor.GameFoundation.Debugging
                 }
             }
 
-            var itemsView = new TreeViewItem(id++, 0, "Inventory");
+            var itemsView = new TreeViewItem<int>(id++, 0, "Inventory");
             rootView.AddChild(itemsView);
 
             GameFoundationSystem.inventory.GetItems(m_InventoryItems);
 
-            var itemDefinitionNodes = new Dictionary<string, TreeViewItem>(m_InventoryItems.Count);
+            var itemDefinitionNodes = new Dictionary<string, TreeViewItem<int>>(m_InventoryItems.Count);
             foreach (var item in m_InventoryItems)
             {
                 if (!itemDefinitionNodes.TryGetValue(item.definition.key, out var definitionNode))
@@ -588,7 +588,7 @@ namespace UnityEditor.GameFoundation.Debugging
                 }
             }
 
-            var rewardDefinitionsView = new TreeViewItem(id++, 0, "Rewards");
+            var rewardDefinitionsView = new TreeViewItem<int>(id++, 0, "Rewards");
             using (GFTools.Pools.rewardList.Get(out var rewards))
             {
                 GameFoundationSystem.rewards.GetRewards(rewards);
@@ -628,7 +628,7 @@ namespace UnityEditor.GameFoundation.Debugging
             return rootView;
         }
 
-        public TreeViewItem FindItem(int id)
+        public TreeViewItem<int> FindItem(int id)
         {
             return base.FindItem(id, rootItem);
         }
@@ -756,44 +756,44 @@ namespace UnityEditor.GameFoundation.Debugging
         /// <summary>
         ///     Get a string from the given <paramref name="itemView"/> to compare to the researched user string.
         /// </summary>
-        static string GetSearchableString(TreeViewItem itemView)
+        static string GetSearchableString(TreeViewItem<int> itemView)
         {
             switch (itemView)
             {
                 case InventoryItemDefinitionView inventoryItemDefinitionView:
-                {
-                    return inventoryItemDefinitionView.definition.key;
-                }
+                    {
+                        return inventoryItemDefinitionView.definition.key;
+                    }
 
                 case InventoryItemView inventoryItemView:
-                {
-                    var inventoryItem = inventoryItemView.inventoryItem;
-                    return $"{inventoryItem.definition.key} #{inventoryItem.id}";
-                }
+                    {
+                        var inventoryItem = inventoryItemView.inventoryItem;
+                        return $"{inventoryItem.definition.key} #{inventoryItem.id}";
+                    }
 
                 case PropertyView propertyView:
-                {
-                    return propertyView.property.key;
-                }
+                    {
+                        return propertyView.property.key;
+                    }
 
                 case CurrencyView currencyView:
-                {
-                    return currencyView.displayName;
-                }
+                    {
+                        return currencyView.displayName;
+                    }
 
                 case RewardView rewardView:
-                {
-                    return rewardView.displayName;
-                }
+                    {
+                        return rewardView.displayName;
+                    }
 
                 case RewardItemView rewardItemView:
-                {
-                    return $"{rewardItemView.displayName} {rewardItemView.reward.rewardDefinition.displayName}";
-                }
+                    {
+                        return $"{rewardItemView.displayName} {rewardItemView.reward.rewardDefinition.displayName}";
+                    }
 
                 default:
                     throw new ArgumentException($"{nameof(InventoryTree)}: Cannot get real display name of " +
-                        $"this {nameof(TreeViewItem)}, unsupported type.");
+                        $"this {nameof(TreeViewItem<int>)}, unsupported type.");
             }
         }
 
