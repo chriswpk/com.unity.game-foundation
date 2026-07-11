@@ -289,7 +289,7 @@ namespace UnityEngine.GameFoundation
         {
             ThrowIfArgNullOrEmpty(id, paramName);
 
-            var item = GameFoundationSdk.inventory.FindItem(id);
+            var item = GameFoundationSystem.inventory.FindItem(id);
             if (item is null)
             {
                 throw new InventoryItemNotFoundException(id);
@@ -319,7 +319,7 @@ namespace UnityEngine.GameFoundation
         {
             ThrowIfArgNull(key, paramName);
 
-            var catalogItem = GameFoundationSdk.catalog.Find<TCatalogItem>(key);
+            var catalogItem = GameFoundationSystem.catalog.Find<TCatalogItem>(key);
             if (catalogItem is null)
             {
                 throw new CatalogItemNotFoundException(key);

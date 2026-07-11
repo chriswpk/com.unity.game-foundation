@@ -186,11 +186,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnEnable()
         {
-            GameFoundationSdk.initialized += RegisterEvents;
-            GameFoundationSdk.initialized += InitializeComponentData;
-            GameFoundationSdk.willUninitialize += UnregisterEvents;
+            GameFoundationSystem.initialized += RegisterEvents;
+            GameFoundationSystem.initialized += InitializeComponentData;
+            GameFoundationSystem.willUninitialize += UnregisterEvents;
 
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 RegisterEvents();
             }
@@ -206,11 +206,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnDisable()
         {
-            GameFoundationSdk.initialized -= RegisterEvents;
-            GameFoundationSdk.initialized -= InitializeComponentData;
-            GameFoundationSdk.willUninitialize -= UnregisterEvents;
+            GameFoundationSystem.initialized -= RegisterEvents;
+            GameFoundationSystem.initialized -= InitializeComponentData;
+            GameFoundationSystem.willUninitialize -= UnregisterEvents;
 
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 UnregisterEvents();
             }
@@ -221,15 +221,15 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void RegisterEvents()
         {
-            if (GameFoundationSdk.inventory != null)
+            if (GameFoundationSystem.inventory != null)
             {
-                GameFoundationSdk.inventory.itemAdded += OnInventoryChanged;
-                GameFoundationSdk.inventory.itemDeleted += OnInventoryChanged;
+                GameFoundationSystem.inventory.itemAdded += OnInventoryChanged;
+                GameFoundationSystem.inventory.itemDeleted += OnInventoryChanged;
             }
 
-            if (GameFoundationSdk.wallet != null)
+            if (GameFoundationSystem.wallet != null)
             {
-                GameFoundationSdk.wallet.balanceChanged += OnWalletChanged;
+                GameFoundationSystem.wallet.balanceChanged += OnWalletChanged;
             }
 
 #if UNITY_PURCHASING && UNITY_PURCHASING_FOR_GAME_FOUNDATION
@@ -253,15 +253,15 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void UnregisterEvents()
         {
-            if (GameFoundationSdk.inventory != null)
+            if (GameFoundationSystem.inventory != null)
             {
-                GameFoundationSdk.inventory.itemAdded -= OnInventoryChanged;
-                GameFoundationSdk.inventory.itemDeleted -= OnInventoryChanged;
+                GameFoundationSystem.inventory.itemAdded -= OnInventoryChanged;
+                GameFoundationSystem.inventory.itemDeleted -= OnInventoryChanged;
             }
 
-            if (GameFoundationSdk.wallet != null)
+            if (GameFoundationSystem.wallet != null)
             {
-                GameFoundationSdk.wallet.balanceChanged -= OnWalletChanged;
+                GameFoundationSystem.wallet.balanceChanged -= OnWalletChanged;
             }
 
 #if UNITY_PURCHASING && UNITY_PURCHASING_FOR_GAME_FOUNDATION
@@ -344,7 +344,7 @@ namespace UnityEngine.GameFoundation.Components
                 return;
             }
 
-            if (!GameFoundationSdk.IsInitialized)
+            if (!GameFoundationSystem.IsInitialized)
             {
                 k_GFLogger.Log("Waiting for initialization.");
                 m_IsDirty = true;
@@ -353,7 +353,7 @@ namespace UnityEngine.GameFoundation.Components
 
             // This is to catch the case where Game Foundation initialized before OnEnable added the GameFoundationSdk
             // initialize listener.
-            if (GameFoundationSdk.IsInitialized && m_Transaction is null)
+            if (GameFoundationSystem.IsInitialized && m_Transaction is null)
             {
                 InitializeComponentData();
             }
@@ -397,7 +397,7 @@ namespace UnityEngine.GameFoundation.Components
             if (!Application.isPlaying || string.IsNullOrEmpty(definitionKey))
                 return null;
 
-            var transactionItem = GameFoundationSdk.catalog?.Find<BaseTransaction>(definitionKey);
+            var transactionItem = GameFoundationSystem.catalog?.Find<BaseTransaction>(definitionKey);
             if (transactionItem != null || !m_ShowDebugLogs) return transactionItem;
 
             k_GFLogger.LogWarning($"TransactionItem \"{definitionKey}\" doesn't exist in Transaction catalog.");
@@ -424,7 +424,7 @@ namespace UnityEngine.GameFoundation.Components
 
         /// <summary>
         ///     Calls <see cref="ITransactionManager.BeginTransaction(BaseTransaction, List{string})"/> from
-        ///     <see cref="GameFoundationSdk.transactions"/> with the purchase detail of the
+        ///     <see cref="GameFoundationSystem.transactions"/> with the purchase detail of the
         ///     Transaction Item displayed in the button.
         ///     Is automatically attached to the onClick event of the PurchaseButton.
         /// </summary>
@@ -456,7 +456,7 @@ namespace UnityEngine.GameFoundation.Components
         /// </param>
         IEnumerator ExecuteTransaction(BaseTransaction transaction)
         {
-            using (Deferred<TransactionResult> deferred = GameFoundationSdk.transactions.BeginTransaction(transaction))
+            using (Deferred<TransactionResult> deferred = GameFoundationSystem.transactions.BeginTransaction(transaction))
             {
                 if (m_ShowDebugLogs)
                 {
@@ -682,7 +682,7 @@ namespace UnityEngine.GameFoundation.Components
             {
                 m_IsDirty = false;
 
-                if (GameFoundationSdk.IsInitialized &&
+                if (GameFoundationSystem.IsInitialized &&
                     (m_Transaction is null && !string.IsNullOrEmpty(m_TransactionKey) ||
                      !(m_Transaction is null) && m_Transaction.key != m_TransactionKey))
                 {
@@ -716,7 +716,7 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void UpdateContentAtRuntime()
         {
-            if (!GameFoundationSdk.IsInitialized || string.IsNullOrEmpty(m_TransactionKey) || m_Transaction is null)
+            if (!GameFoundationSystem.IsInitialized || string.IsNullOrEmpty(m_TransactionKey) || m_Transaction is null)
             {
                 SetTextContent(null);
                 SetIconSprite(null);
@@ -977,7 +977,7 @@ namespace UnityEngine.GameFoundation.Components
                 return PurchasableStatus.PurchaseButtonMisconfigured;
             }
 
-            if (!GameFoundationSdk.IsInitialized)
+            if (!GameFoundationSystem.IsInitialized)
             {
                 return PurchasableStatus.GameFoundationUnavailable;
             }
@@ -1007,7 +1007,7 @@ namespace UnityEngine.GameFoundation.Components
                     return PurchasableStatus.TransactionMisconfigured;
                 }
 
-                if (!GameFoundationSdk.transactions.purchasingAdapterIsInitialized)
+                if (!GameFoundationSystem.transactions.purchasingAdapterIsInitialized)
                 {
                     return PurchasableStatus.PurchasingAdapterUnavailable;
                 }

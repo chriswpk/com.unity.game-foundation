@@ -73,11 +73,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnEnable()
         {
-            GameFoundationSdk.initialized += RegisterEvents;
-            GameFoundationSdk.initialized += InitializeComponentData;
-            GameFoundationSdk.willUninitialize += UnregisterEvents;
+            GameFoundationSystem.initialized += RegisterEvents;
+            GameFoundationSystem.initialized += InitializeComponentData;
+            GameFoundationSystem.willUninitialize += UnregisterEvents;
 
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 RegisterEvents();
             }
@@ -88,11 +88,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnDisable()
         {
-            GameFoundationSdk.initialized -= RegisterEvents;
-            GameFoundationSdk.initialized -= InitializeComponentData;
-            GameFoundationSdk.willUninitialize -= UnregisterEvents;
+            GameFoundationSystem.initialized -= RegisterEvents;
+            GameFoundationSystem.initialized -= InitializeComponentData;
+            GameFoundationSystem.willUninitialize -= UnregisterEvents;
 
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 UnregisterEvents();
             }
@@ -103,12 +103,12 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void RegisterEvents()
         {
-            if (GameFoundationSdk.rewards == null)
+            if (GameFoundationSystem.rewards == null)
                 return;
 
-            GameFoundationSdk.rewards.rewardItemClaimSucceeded += OnRewardItemClaimSucceeded;
-            GameFoundationSdk.rewards.rewardItemClaimFailed += OnRewardItemClaimFailed;
-            GameFoundationSdk.rewards.rewardItemClaimInitiated += OnRewardItemClaimInitiated;
+            GameFoundationSystem.rewards.rewardItemClaimSucceeded += OnRewardItemClaimSucceeded;
+            GameFoundationSystem.rewards.rewardItemClaimFailed += OnRewardItemClaimFailed;
+            GameFoundationSystem.rewards.rewardItemClaimInitiated += OnRewardItemClaimInitiated;
         }
 
         /// <summary>
@@ -116,12 +116,12 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void UnregisterEvents()
         {
-            if (GameFoundationSdk.rewards == null)
+            if (GameFoundationSystem.rewards == null)
                 return;
 
-            GameFoundationSdk.rewards.rewardItemClaimSucceeded -= OnRewardItemClaimSucceeded;
-            GameFoundationSdk.rewards.rewardItemClaimFailed -= OnRewardItemClaimFailed;
-            GameFoundationSdk.rewards.rewardItemClaimInitiated -= OnRewardItemClaimInitiated;
+            GameFoundationSystem.rewards.rewardItemClaimSucceeded -= OnRewardItemClaimSucceeded;
+            GameFoundationSystem.rewards.rewardItemClaimFailed -= OnRewardItemClaimFailed;
+            GameFoundationSystem.rewards.rewardItemClaimInitiated -= OnRewardItemClaimInitiated;
         }
 
         /// <summary>
@@ -166,7 +166,7 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void Start()
         {
-            if (!GameFoundationSdk.IsInitialized)
+            if (!GameFoundationSystem.IsInitialized)
             {
                 k_GFLogger.Log("Waiting for initialization.");
                 SetButtonEnabledStateInternal(false);
@@ -174,7 +174,7 @@ namespace UnityEngine.GameFoundation.Components
             }
 
             // This is to catch the case where Game Foundation initialized before OnEnable added the GameFoundationSdk initialize listener.
-            if (GameFoundationSdk.IsInitialized && m_RewardItemDefinition is null)
+            if (GameFoundationSystem.IsInitialized && m_RewardItemDefinition is null)
             {
                 InitializeComponentData();
             }
@@ -232,7 +232,7 @@ namespace UnityEngine.GameFoundation.Components
             if (!Application.isPlaying || string.IsNullOrEmpty(rewardDefinitionKey) || string.IsNullOrEmpty(rewardItemDefinitionKey))
                 return null;
 
-            var rewardDefinition = GameFoundationSdk.catalog?.Find<RewardDefinition>(rewardDefinitionKey);
+            var rewardDefinition = GameFoundationSystem.catalog?.Find<RewardDefinition>(rewardDefinitionKey);
             if (rewardDefinition == null)
             {
                 if (m_ShowDebugLogs)

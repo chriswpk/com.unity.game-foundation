@@ -21,7 +21,7 @@ namespace UnityEngine.GameFoundation
         /// <summary>
         ///     Accessor to GameFoundation's current DAL.
         /// </summary>
-        static IRewardDataLayer dataLayer => GameFoundationSdk.dataLayer;
+        static IRewardDataLayer dataLayer => GameFoundationSystem.dataLayer;
 
         /// <inheritdoc cref="IRewardManager.rewardItemClaimInitiated"/>
         internal event Action<string, string> rewardItemClaimInitiated;
@@ -105,7 +105,7 @@ namespace UnityEngine.GameFoundation
 
             // send it to the data layer for further validation and fulfillment
 
-            GameFoundationSdk.updater.StartCoroutine(ProcessClaimInDataLayer(reward, rewardItemKey, completer));
+            GameFoundationSystem.updater.StartCoroutine(ProcessClaimInDataLayer(reward, rewardItemKey, completer));
 
             return deferred;
         }
@@ -171,7 +171,7 @@ namespace UnityEngine.GameFoundation
             var data = dataLayer.GetData();
 
             var rewardDefinitions = new List<RewardDefinition>();
-            GameFoundationSdk.catalog.GetItems(rewardDefinitions);
+            GameFoundationSystem.catalog.GetItems(rewardDefinitions);
 
             foreach (var rewardDefinition in rewardDefinitions)
             {
@@ -243,7 +243,7 @@ namespace UnityEngine.GameFoundation
 
                 if (dalDeferred.isFulfilled)
                 {
-                    var payoutResult = (GameFoundationSdk.transactions as TransactionManagerImpl).ApplyPayoutInternally(dalDeferred.result);
+                    var payoutResult = (GameFoundationSystem.transactions as TransactionManagerImpl).ApplyPayoutInternally(dalDeferred.result);
 
                     // tell the caller that the purchase and redemption are successfully finished
                     completer.Resolve(payoutResult);

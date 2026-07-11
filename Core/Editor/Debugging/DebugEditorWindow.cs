@@ -43,8 +43,8 @@ namespace UnityEditor.GameFoundation.Debugging
             UpdateState();
 
             EditorApplication.playModeStateChanged += OnPlayModeStateChanged;
-            GameFoundationSdk.initialized += UpdateState;
-            GameFoundationSdk.willUninitialize += UpdateState;
+            GameFoundationSystem.initialized += UpdateState;
+            GameFoundationSystem.willUninitialize += UpdateState;
 
             m_TreeView.AttachListeners();
         }
@@ -54,8 +54,8 @@ namespace UnityEditor.GameFoundation.Debugging
             m_TreeView.DetachListeners();
 
             EditorApplication.playModeStateChanged -= OnPlayModeStateChanged;
-            GameFoundationSdk.initialized -= UpdateState;
-            GameFoundationSdk.willUninitialize -= UpdateState;
+            GameFoundationSystem.initialized -= UpdateState;
+            GameFoundationSystem.willUninitialize -= UpdateState;
         }
 
         void OnGUI()
@@ -71,9 +71,9 @@ namespace UnityEditor.GameFoundation.Debugging
         void UpdateState()
         {
             if (!EditorApplication.isPlaying ||
-                GameFoundationSdk.catalog is null ||
-                GameFoundationSdk.inventory is null ||
-                GameFoundationSdk.wallet is null)
+                GameFoundationSystem.catalog is null ||
+                GameFoundationSystem.inventory is null ||
+                GameFoundationSystem.wallet is null)
             {
                 if (m_CurrentStateDraw != DrawEditMode)
                 {
@@ -84,14 +84,14 @@ namespace UnityEditor.GameFoundation.Debugging
                 return;
             }
 
-            if (!GameFoundationSdk.IsInitialized)
+            if (!GameFoundationSystem.IsInitialized)
             {
                 m_CurrentStateDraw = DrawPlayModeGameFoundationNotInitialized;
 
                 return;
             }
 
-            GameFoundationSdk.catalog.GetItems(m_InventoryItemDefinitions);
+            GameFoundationSystem.catalog.GetItems(m_InventoryItemDefinitions);
 
             m_CurrentStateDraw = DrawPlayModeGameFoundationInitialized;
 
@@ -106,7 +106,7 @@ namespace UnityEditor.GameFoundation.Debugging
         static void DrawPlayModeGameFoundationNotInitialized()
         {
             EditorGUILayout.HelpBox(
-                $"No Runtime data available! Ensure Game Foundation is Initialized via {nameof(GameFoundationSdk)}.{nameof(GameFoundationSdk.Initialize)}()",
+                $"No Runtime data available! Ensure Game Foundation is Initialized via {nameof(GameFoundationSystem)}.{nameof(GameFoundationSystem.Initialize)}()",
                 MessageType.Error);
         }
 
@@ -182,7 +182,7 @@ namespace UnityEditor.GameFoundation.Debugging
                     {
                         var keyToAdd = m_AddItemOptions[m_AddItemOptionsIndex];
                         var definition = GFTools.GetCatalogItemOrDie<InventoryItemDefinition>(keyToAdd, nameof(keyToAdd));
-                        GameFoundationSdk.inventory.CreateItem(definition);
+                        GameFoundationSystem.inventory.CreateItem(definition);
                     }
                 }
             }

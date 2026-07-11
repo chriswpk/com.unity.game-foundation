@@ -19,11 +19,11 @@ namespace UnityEngine.GameFoundation
         public long maximumBalance { get; internal set; }
 
         /// <inheritdoc/>
-        public long quantity => GameFoundationSdk.wallet.Get(this);
+        public long quantity => GameFoundationSystem.wallet.Get(this);
 
         internal override bool VerifyCost(long cost, out Exception failReason)
         {
-            var actualBalance = GameFoundationSdk.wallet.Get(this);
+            var actualBalance = GameFoundationSystem.wallet.Get(this);
 
             var canPay = actualBalance >= cost;
 

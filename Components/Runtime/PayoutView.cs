@@ -115,7 +115,7 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnEnable()
         {
-            GameFoundationSdk.initialized += InitializeComponentData;
+            GameFoundationSystem.initialized += InitializeComponentData;
 
             if (!(m_Transaction is null) && !m_IsDrivenByOtherComponent)
             {
@@ -128,7 +128,7 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnDisable()
         {
-            GameFoundationSdk.initialized -= InitializeComponentData;
+            GameFoundationSystem.initialized -= InitializeComponentData;
         }
 
         /// <summary>
@@ -145,7 +145,7 @@ namespace UnityEngine.GameFoundation.Components
                 return;
             }
 
-            if (!GameFoundationSdk.IsInitialized)
+            if (!GameFoundationSystem.IsInitialized)
             {
                 k_GFLogger.Log("Waiting for initialization.");
                 UpdateContent();
@@ -154,7 +154,7 @@ namespace UnityEngine.GameFoundation.Components
 
             // This is to catch the case where Game Foundation initialized before OnEnable added the GameFoundationSdk
             // initialize listener.
-            if (GameFoundationSdk.IsInitialized && m_Transaction is null)
+            if (GameFoundationSystem.IsInitialized && m_Transaction is null)
             {
                 InitializeComponentData();
             }
@@ -378,7 +378,7 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void UpdateRuntimeObject()
         {
-            if (!GameFoundationSdk.IsInitialized)
+            if (!GameFoundationSystem.IsInitialized)
                 return;
 
             if (m_Transaction is null && !string.IsNullOrEmpty(m_TransactionKey) ||
@@ -419,7 +419,7 @@ namespace UnityEngine.GameFoundation.Components
             if (!Application.isPlaying || string.IsNullOrEmpty(definitionKey))
                 return null;
 
-            var transactionItem = GameFoundationSdk.catalog?.Find<BaseTransaction>(definitionKey);
+            var transactionItem = GameFoundationSystem.catalog?.Find<BaseTransaction>(definitionKey);
             return transactionItem;
         }
 
@@ -455,7 +455,7 @@ namespace UnityEngine.GameFoundation.Components
             ClearContent();
             if (Application.isPlaying)
             {
-                if (m_PayoutItemPrefab is null && GameFoundationSdk.IsInitialized)
+                if (m_PayoutItemPrefab is null && GameFoundationSystem.IsInitialized)
                 {
                     k_GFLogger.LogWarning("PayoutItem Prefab needs to be defined to display payout images.");
                 }

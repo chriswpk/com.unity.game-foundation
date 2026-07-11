@@ -82,10 +82,10 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnEnable()
         {
-            GameFoundationSdk.initialized += OnGameFoundationInitialized;
-            GameFoundationSdk.willUninitialize += OnGameFoundationWillUninitialize;
+            GameFoundationSystem.initialized += OnGameFoundationInitialized;
+            GameFoundationSystem.willUninitialize += OnGameFoundationWillUninitialize;
 
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 RegisterEvents();
             }
@@ -97,10 +97,10 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnDisable()
         {
-            GameFoundationSdk.initialized -= OnGameFoundationInitialized;
-            GameFoundationSdk.willUninitialize -= OnGameFoundationWillUninitialize;
+            GameFoundationSystem.initialized -= OnGameFoundationInitialized;
+            GameFoundationSystem.willUninitialize -= OnGameFoundationWillUninitialize;
 
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 UnregisterEvents();
             }
@@ -111,13 +111,13 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void RegisterEvents()
         {
-            if (GameFoundationSdk.rewards == null)
+            if (GameFoundationSystem.rewards == null)
                 return;
 
-            GameFoundationSdk.rewards.rewardItemClaimSucceeded += OnRewardItemClaimSucceeded;
-            GameFoundationSdk.rewards.rewardItemClaimFailed += OnRewardItemClaimFailed;
-            GameFoundationSdk.rewards.rewardItemClaimInitiated += OnRewardItemClaimInitiated;
-            GameFoundationSdk.rewards.rewardItemClaimProgressed += OnRewardItemClaimProgressed;
+            GameFoundationSystem.rewards.rewardItemClaimSucceeded += OnRewardItemClaimSucceeded;
+            GameFoundationSystem.rewards.rewardItemClaimFailed += OnRewardItemClaimFailed;
+            GameFoundationSystem.rewards.rewardItemClaimInitiated += OnRewardItemClaimInitiated;
+            GameFoundationSystem.rewards.rewardItemClaimProgressed += OnRewardItemClaimProgressed;
         }
 
         /// <summary>
@@ -125,13 +125,13 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void UnregisterEvents()
         {
-            if (GameFoundationSdk.rewards == null)
+            if (GameFoundationSystem.rewards == null)
                 return;
 
-            GameFoundationSdk.rewards.rewardItemClaimSucceeded -= OnRewardItemClaimSucceeded;
-            GameFoundationSdk.rewards.rewardItemClaimFailed -= OnRewardItemClaimFailed;
-            GameFoundationSdk.rewards.rewardItemClaimInitiated -= OnRewardItemClaimInitiated;
-            GameFoundationSdk.rewards.rewardItemClaimProgressed -= OnRewardItemClaimProgressed;
+            GameFoundationSystem.rewards.rewardItemClaimSucceeded -= OnRewardItemClaimSucceeded;
+            GameFoundationSystem.rewards.rewardItemClaimFailed -= OnRewardItemClaimFailed;
+            GameFoundationSystem.rewards.rewardItemClaimInitiated -= OnRewardItemClaimInitiated;
+            GameFoundationSystem.rewards.rewardItemClaimProgressed -= OnRewardItemClaimProgressed;
         }
 
         /// <summary>
@@ -152,7 +152,7 @@ namespace UnityEngine.GameFoundation.Components
                 return false;
             }
 
-            if (GameFoundationSdk.IsInitialized && m_RewardItemsToClaim.Count == 0)
+            if (GameFoundationSystem.IsInitialized && m_RewardItemsToClaim.Count == 0)
             {
                 InitiateClaimInCoroutine(definition);
             }
@@ -196,7 +196,7 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void InitiateClaimNextReward()
         {
-            if (GameFoundationSdk.IsInitialized && m_RewardItemsToClaim.Count > 0)
+            if (GameFoundationSystem.IsInitialized && m_RewardItemsToClaim.Count > 0)
             {
                 InitiateClaimInCoroutine(m_RewardItemsToClaim.Dequeue());
             }
@@ -210,7 +210,7 @@ namespace UnityEngine.GameFoundation.Components
         /// </param>
         IEnumerator InitiateClaim(RewardItemDefinition rewardItem)
         {
-            using (var deferred = GameFoundationSdk.rewards.Claim(rewardItem.rewardDefinition, rewardItem.key))
+            using (var deferred = GameFoundationSystem.rewards.Claim(rewardItem.rewardDefinition, rewardItem.key))
             {
                 if (m_ShowDebugLogs)
                 {

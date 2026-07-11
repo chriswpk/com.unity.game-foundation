@@ -265,11 +265,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnEnable()
         {
-            GameFoundationSdk.initialized += RegisterEvents;
-            GameFoundationSdk.initialized += InitializeComponentData;
-            GameFoundationSdk.willUninitialize += UnregisterEvents;
+            GameFoundationSystem.initialized += RegisterEvents;
+            GameFoundationSystem.initialized += InitializeComponentData;
+            GameFoundationSystem.willUninitialize += UnregisterEvents;
 
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 RegisterEvents();
             }
@@ -285,11 +285,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnDisable()
         {
-            GameFoundationSdk.initialized -= RegisterEvents;
-            GameFoundationSdk.initialized -= InitializeComponentData;
-            GameFoundationSdk.willUninitialize -= UnregisterEvents;
+            GameFoundationSystem.initialized -= RegisterEvents;
+            GameFoundationSystem.initialized -= InitializeComponentData;
+            GameFoundationSystem.willUninitialize -= UnregisterEvents;
 
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 UnregisterEvents();
             }
@@ -300,11 +300,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void RegisterEvents()
         {
-            if (GameFoundationSdk.transactions == null)
+            if (GameFoundationSystem.transactions == null)
                 return;
 
-            GameFoundationSdk.transactions.transactionSucceeded += OnTransactionSucceeded;
-            GameFoundationSdk.transactions.transactionFailed += OnTransactionFailed;
+            GameFoundationSystem.transactions.transactionSucceeded += OnTransactionSucceeded;
+            GameFoundationSystem.transactions.transactionFailed += OnTransactionFailed;
         }
 
         /// <summary>
@@ -312,11 +312,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void UnregisterEvents()
         {
-            if (GameFoundationSdk.transactions == null)
+            if (GameFoundationSystem.transactions == null)
                 return;
 
-            GameFoundationSdk.transactions.transactionSucceeded -= OnTransactionSucceeded;
-            GameFoundationSdk.transactions.transactionFailed -= OnTransactionFailed;
+            GameFoundationSystem.transactions.transactionSucceeded -= OnTransactionSucceeded;
+            GameFoundationSystem.transactions.transactionFailed -= OnTransactionFailed;
         }
 
         /// <summary>
@@ -332,13 +332,13 @@ namespace UnityEngine.GameFoundation.Components
             }
 
             // This is to catch the case where Game Foundation initialized before OnEnable added the GameFoundationSdk initialize listener.
-            if (GameFoundationSdk.IsInitialized && m_Transaction is null)
+            if (GameFoundationSystem.IsInitialized && m_Transaction is null)
             {
                 InitializeComponentData();
                 return;
             }
 
-            if (!GameFoundationSdk.IsInitialized)
+            if (!GameFoundationSystem.IsInitialized)
             {
                 k_GFLogger.Log("Waiting for initialization.");
                 m_IsDirty = true;
@@ -382,7 +382,7 @@ namespace UnityEngine.GameFoundation.Components
             if (!Application.isPlaying || string.IsNullOrEmpty(definitionKey))
                 return null;
 
-            var transactionItem = GameFoundationSdk.catalog?.Find<BaseTransaction>(definitionKey);
+            var transactionItem = GameFoundationSystem.catalog?.Find<BaseTransaction>(definitionKey);
             if (transactionItem != null || !m_ShowDebugLogs) return transactionItem;
 
             k_GFLogger.LogWarning($"TransactionItem \"{definitionKey}\" doesn't exist in Transaction catalog.");
@@ -446,7 +446,7 @@ namespace UnityEngine.GameFoundation.Components
                 return;
             }
             
-            if (!GameFoundationSdk.IsInitialized)
+            if (!GameFoundationSystem.IsInitialized)
             {
                 k_GFLogger.Log("Promotion Popup has been opened when Game Foundation Sdk is not initialized. Content will be blank until Game Foundation initializes and no changes to state have been made.");
                 m_Transaction = null;
@@ -725,7 +725,7 @@ namespace UnityEngine.GameFoundation.Components
                 // UpdateContent doesn't update m_Currency, which is what is used to fetch icons at runtime.
                 // If Game Foundation is initialized and m_Currency does not match m_CurrencyKey,
                 // reset m_Currency based on m_CurrencyKey.
-                if (GameFoundationSdk.IsInitialized &&
+                if (GameFoundationSystem.IsInitialized &&
                     (m_Transaction is null && !string.IsNullOrEmpty(m_TransactionKey) || 
                      !(m_Transaction is null) && m_Transaction.key != m_TransactionKey))
                 {

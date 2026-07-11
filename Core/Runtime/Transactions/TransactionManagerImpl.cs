@@ -108,7 +108,7 @@ namespace UnityEngine.GameFoundation
         /// <summary>
         ///     Accessor to GameFoundation's current DAL.
         /// </summary>
-        static ITransactionDataLayer dataLayer => GameFoundationSdk.dataLayer;
+        static ITransactionDataLayer dataLayer => GameFoundationSystem.dataLayer;
 
         /// <inheritdoc cref="ITransactionManager.transactionInitiated"/>
         public event Action<BaseTransaction> transactionInitiated;
@@ -165,7 +165,7 @@ namespace UnityEngine.GameFoundation
             // even if we don't have any IAPs because it properly sets m_PurchasedIapProducts.
             DeserializePurchasedIapProducts();
 
-            var iapCount = GameFoundationSdk.catalog.GetItems<IAPTransaction>();
+            var iapCount = GameFoundationSystem.catalog.GetItems<IAPTransaction>();
             if (iapCount <= 0)
             {
                 completer.Resolve();
@@ -272,7 +272,7 @@ namespace UnityEngine.GameFoundation
 
             if (completer.isActive)
             {
-                GameFoundationSdk.updater.StartCoroutine(WaitForPurchasingAdapterInitialization());
+                GameFoundationSystem.updater.StartCoroutine(WaitForPurchasingAdapterInitialization());
             }
         }
 
@@ -335,7 +335,7 @@ namespace UnityEngine.GameFoundation
                     m_CurrentVirtualTransaction = virtualTransaction;
 
                     if (costItemIds == null) costItemIds = new List<string>();
-                    GameFoundationSdk.updater.StartCoroutine(
+                    GameFoundationSystem.updater.StartCoroutine(
                         ProcessVirtualTransactionCoroutine(virtualTransaction, completer, costItemIds));
 
                     break;
@@ -383,7 +383,7 @@ namespace UnityEngine.GameFoundation
                     // Make sure to reset the whole tuple to start on a clean slate.
                     m_CurrentIap = (iapTransaction, false, null);
 
-                    GameFoundationSdk.updater.StartCoroutine(
+                    GameFoundationSystem.updater.StartCoroutine(
                         ProcessIAPTransactionCoroutine(completer, iapTransaction));
 
                     break;
@@ -539,13 +539,13 @@ namespace UnityEngine.GameFoundation
                 // the amount in the currency exchange is negative,
                 // but RemoveBalance expects only positive numbers
                 var amount = Math.Abs(exchangeCost.currencies[i].amount);
-                var currency = GameFoundationSdk.catalog.Find<Currency>(exchangeCost.currencies[i].currencyKey);
-                (GameFoundationSdk.wallet as WalletManagerImpl).RemoveBalanceInternal(currency, amount);
+                var currency = GameFoundationSystem.catalog.Find<Currency>(exchangeCost.currencies[i].currencyKey);
+                (GameFoundationSystem.wallet as WalletManagerImpl).RemoveBalanceInternal(currency, amount);
 
                 currencyCosts[i] = new CurrencyExchange
                 {
                     amount = exchangeCost.currencies[i].amount,
-                    currency = GameFoundationSdk.catalog.Find<Currency>(exchangeCost.currencies[i].currencyKey)
+                    currency = GameFoundationSystem.catalog.Find<Currency>(exchangeCost.currencies[i].currencyKey)
                 };
             }
 
@@ -557,12 +557,12 @@ namespace UnityEngine.GameFoundation
             for (var i = 0; i < itemCostCount; i++)
             {
                 var exchangeItem = exchangeCost.items[i];
-                var item = GameFoundationSdk.inventory.FindItem(exchangeItem.id);
+                var item = GameFoundationSystem.inventory.FindItem(exchangeItem.id);
 
                 // if item is used up (or nonstackable) then remove it
                 if (exchangeItem.quantity <= 0)
                 {
-                    (GameFoundationSdk.inventory as InventoryManagerImpl).DeleteInternal(item);
+                    (GameFoundationSystem.inventory as InventoryManagerImpl).DeleteInternal(item);
                 }
 
                 // if item is stackable and NOT used up then set new quantity
@@ -594,8 +594,8 @@ namespace UnityEngine.GameFoundation
 
                 foreach (var currencyData in exchange.currencies)
                 {
-                    var currency = GameFoundationSdk.catalog.Find<Currency>(currencyData.currencyKey);
-                    (GameFoundationSdk.wallet as WalletManagerImpl).AddBalanceInternal(currency, currencyData.amount);
+                    var currency = GameFoundationSystem.catalog.Find<Currency>(currencyData.currencyKey);
+                    (GameFoundationSystem.wallet as WalletManagerImpl).AddBalanceInternal(currency, currencyData.amount);
 
                     tradables.Add(new CurrencyExchange
                     {
@@ -608,8 +608,8 @@ namespace UnityEngine.GameFoundation
 
                 foreach (var itemData in exchange.items)
                 {
-                    var definition = GameFoundationSdk.catalog.Find<InventoryItemDefinition>(itemData.definitionKey);
-                    var item = (GameFoundationSdk.inventory as InventoryManagerImpl).CreateInternal(definition, itemData.id);
+                    var definition = GameFoundationSystem.catalog.Find<InventoryItemDefinition>(itemData.definitionKey);
+                    var item = (GameFoundationSystem.inventory as InventoryManagerImpl).CreateInternal(definition, itemData.id);
                     tradables.Add(item);
 
                     // update stackable item quantity.
@@ -692,7 +692,7 @@ namespace UnityEngine.GameFoundation
         ///     true if specifeid Product Id is owned by the player, otherwise false.
         /// </returns>
         /// <exception cref="InvalidOperationException">
-        ///     Thrown if <see cref="GameFoundationSdk.transactions"/> has not been initialized.
+        ///     Thrown if <see cref="GameFoundationSystem.transactions"/> has not been initialized.
         /// </exception>
         internal bool IsIapProductOwned(string productId)
         {
@@ -926,7 +926,7 @@ namespace UnityEngine.GameFoundation
 
             // by calling this coroutine without a transaction parameter,
             // the purchase will be treated as a "background purchase"
-            GameFoundationSdk.updater.StartCoroutine(ProcessIAPTransactionCoroutine(completer));
+            GameFoundationSystem.updater.StartCoroutine(ProcessIAPTransactionCoroutine(completer));
 
             return deferred;
         }
@@ -1107,7 +1107,7 @@ namespace UnityEngine.GameFoundation
             {
                 if (transaction == null)
                 {
-                    m_CurrentIap.transaction = GameFoundationSdk.catalog
+                    m_CurrentIap.transaction = GameFoundationSystem.catalog
                         .FindIAPTransactionByProductId(confirmation.productId);
                     if (m_CurrentIap.transaction == null)
                     {

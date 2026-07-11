@@ -76,11 +76,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnEnable()
         {
-            GameFoundationSdk.initialized += RegisterEvents;
-            GameFoundationSdk.initialized += InitializeComponentData;
-            GameFoundationSdk.willUninitialize += UnregisterEvents;
+            GameFoundationSystem.initialized += RegisterEvents;
+            GameFoundationSystem.initialized += InitializeComponentData;
+            GameFoundationSystem.willUninitialize += UnregisterEvents;
 
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 RegisterEvents();
             }
@@ -96,11 +96,11 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void OnDisable()
         {
-            GameFoundationSdk.initialized -= RegisterEvents;
-            GameFoundationSdk.initialized -= InitializeComponentData;
-            GameFoundationSdk.willUninitialize -= UnregisterEvents;
+            GameFoundationSystem.initialized -= RegisterEvents;
+            GameFoundationSystem.initialized -= InitializeComponentData;
+            GameFoundationSystem.willUninitialize -= UnregisterEvents;
 
-            if (GameFoundationSdk.IsInitialized)
+            if (GameFoundationSystem.IsInitialized)
             {
                 UnregisterEvents();
             }
@@ -111,10 +111,10 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void RegisterEvents()
         {
-            if (GameFoundationSdk.wallet == null)
+            if (GameFoundationSystem.wallet == null)
                 return;
 
-            GameFoundationSdk.wallet.balanceChanged += OnCurrencyChanged;
+            GameFoundationSystem.wallet.balanceChanged += OnCurrencyChanged;
         }
 
         /// <summary>
@@ -122,10 +122,10 @@ namespace UnityEngine.GameFoundation.Components
         /// </summary>
         void UnregisterEvents()
         {
-            if (GameFoundationSdk.wallet == null)
+            if (GameFoundationSystem.wallet == null)
                 return;
 
-            GameFoundationSdk.wallet.balanceChanged -= OnCurrencyChanged;
+            GameFoundationSystem.wallet.balanceChanged -= OnCurrencyChanged;
         }
 
         /// <summary>
@@ -139,13 +139,13 @@ namespace UnityEngine.GameFoundation.Components
                 return;
 
             // This is to catch the case where Game Foundation initialized before OnEnable added the GameFoundationSdk initialize listener.
-            if (GameFoundationSdk.IsInitialized && m_Currency is null)
+            if (GameFoundationSystem.IsInitialized && m_Currency is null)
             {
                 InitializeComponentData();
                 return;
             }
 
-            if (!GameFoundationSdk.IsInitialized)
+            if (!GameFoundationSystem.IsInitialized)
             {
                 k_GFLogger.Log("Waiting for initialization.");
                 m_IsDirty = true;
@@ -189,7 +189,7 @@ namespace UnityEngine.GameFoundation.Components
             if (!Application.isPlaying || string.IsNullOrEmpty(currencyKey))
                 return null;
 
-            var currency = GameFoundationSdk.catalog?.Find<Currency>(currencyKey);
+            var currency = GameFoundationSystem.catalog?.Find<Currency>(currencyKey);
             if (currency != null || !m_ShowDebugLogs) return currency;
 
             k_GFLogger.LogWarning($"Currency \"{currencyKey}\" doesn't exist in Currency catalog.");
@@ -279,7 +279,7 @@ namespace UnityEngine.GameFoundation.Components
             if (m_IsDirty)
             {
                 m_IsDirty = false;
-                if (GameFoundationSdk.IsInitialized &&
+                if (GameFoundationSystem.IsInitialized &&
                     (m_Currency is null && !string.IsNullOrEmpty(m_CurrencyKey) || 
                     !(m_Currency is null) && m_Currency.key != m_CurrencyKey))
                 {
@@ -303,7 +303,7 @@ namespace UnityEngine.GameFoundation.Components
             }
 #endif
             
-            if (Application.isPlaying && !GameFoundationSdk.IsInitialized)
+            if (Application.isPlaying && !GameFoundationSystem.IsInitialized)
             {
                 SetIconSprite(null);
                 SetQuantity(null);
@@ -380,7 +380,7 @@ namespace UnityEngine.GameFoundation.Components
                 return;
             }
 
-            var quantity = m_Currency != null ? GameFoundationSdk.wallet.Get(m_Currency) : 0;
+            var quantity = m_Currency != null ? GameFoundationSystem.wallet.Get(m_Currency) : 0;
             SetQuantity(quantity.ToString());
         }
 
