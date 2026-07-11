@@ -1,8 +1,8 @@
 {
   "name": "com.unity.game-foundation",
   "displayName": "Game Foundation",
-  "version": "0.9.0-preview.3",
-  "unity": "2019.4",
+  "version": "0.9.1",
+  "unity": "6000.5",
   "description": "Game Foundation core package.\n\nThis package contains the following components: \n▪ Inventory System \n▪ Virtual Currency Wallet \n▪ Properties System \n▪ Transaction System  \n▪ Reward System  \n▪ Core Systems \n\nNote: Preview release, public API subject to change.",
   "keywords": [
     "unity",
