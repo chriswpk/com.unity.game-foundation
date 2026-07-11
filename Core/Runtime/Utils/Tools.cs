@@ -339,7 +339,7 @@ namespace UnityEngine.GameFoundation
         /// </returns>
         public static bool NamespaceExists(string testNamespace)
         {
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (var assembly in CurrentAssemblies.GetLoadedAssemblies())
             {
                 foreach (var type in assembly.GetTypes())
                 {
