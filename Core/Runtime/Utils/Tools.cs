@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text.RegularExpressions;
+using UnityEngine.Assemblies;
 using UnityEngine.GameFoundation.Exceptions;
 using UnityEngine.Promise;
 
@@ -363,7 +364,7 @@ namespace UnityEngine.GameFoundation
         /// </returns>
         public static bool TypeExists(string testType)
         {
-            foreach (var assembly in AppDomain.CurrentDomain.GetAssemblies())
+            foreach (var assembly in CurrentAssemblies.GetLoadedAssemblies())
             {
                 foreach (var type in assembly.GetTypes())
                 {
@@ -388,7 +389,7 @@ namespace UnityEngine.GameFoundation
         /// <returns>
         ///     True if exception should be simply rethrown instead of handled as a normal exception.
         /// </returns>
-        internal static bool ShouldRethrowException(Exception e) 
+        internal static bool ShouldRethrowException(Exception e)
         {
             return IsExitGUIException(e);
         }
@@ -406,7 +407,7 @@ namespace UnityEngine.GameFoundation
         internal static bool IsExitGUIException(Exception e)
         {
             while (e is TargetInvocationException && !(e.InnerException is null))
-            {   
+            {
                 e = e.InnerException;
             }
 

@@ -7,7 +7,7 @@ namespace UnityEditor.GameFoundation
     {
         ResourcesAssetTreeView m_Tree;
 
-        TreeViewState m_TreeState;
+        TreeViewState<int> m_TreeState;
 
         bool m_ShouldClose;
 
@@ -58,7 +58,7 @@ namespace UnityEditor.GameFoundation
             if (m_Tree == null)
             {
                 if (m_TreeState == null)
-                    m_TreeState = new TreeViewState();
+                    m_TreeState = new TreeViewState<int>();
 
                 m_Tree = new ResourcesAssetTreeView(m_TreeState, m_Drawer, this);
                 m_Tree.Reload();
